@@ -4,17 +4,21 @@ using System.Text;
 
 namespace ScottLogic.Internal.Training.Matcher
 {
-    class Order
+    public class Order
     {
-        private int accountNumber;
+        public int accountNumber { get; }
         private int quantity;
-        private int price;
+        public int price { get; }
+        public string action { get; }
+        public int timeRank {get;}
 
-        public Order(int accountNumber, int quantity, int price)
+        public Order(int accountNumber, int quantity, int price, string action, int timeRank)
         {
             this.accountNumber = accountNumber;
             this.quantity = quantity;
             this.price = price;
+            this.action = action;
+            this.timeRank = timeRank;
         }
 
     }

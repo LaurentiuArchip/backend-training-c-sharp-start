@@ -12,7 +12,7 @@ namespace ScottLogic.Internal.Training.Matcher
 
         public Trade()
         {
-            currentOrder = new Order(1001, 45, 55);
+            currentOrder = new Order(1001, 45, 55, "buy", 12);
         }
             
     }

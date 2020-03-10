@@ -1,39 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace ScottLogic.Internal.Training.Matcher
 {
     public class Order : IEquatable<Order>
     {
-        public int accountNumber { get; }
-        public int quantity { get; set; }
-        public int price { get; }
-        public string action { get; }
-        public int timeRank {get;}
+        public int AccountNumber { get; }
+        public int Quantity { get; set; }
+        public int Price { get; }
+        public string Action { get; }
+        public int TimeRank {get;}
 
         public Order(int accountNumber, int quantity, int price, string action, int timeRank)
         {
-            this.accountNumber = accountNumber;
-            this.quantity = quantity;
-            this.price = price;
-            this.action = action;
-            this.timeRank = timeRank;
+            AccountNumber = accountNumber;
+            Quantity = quantity;
+            Price = price;
+            Action = action;
+            TimeRank = timeRank;
         }
 
         public bool Equals(Order other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return (
-                this.accountNumber == other.accountNumber &&
-                this.quantity == other.quantity &&
-                this.price == other.price &&
-                this.action == other.action);
+            return other != null && 
+                AccountNumber == other.AccountNumber &&
+                Quantity == other.Quantity &&
+                Price == other.Price &&
+                Action == other.Action &&
+                TimeRank == other.TimeRank;
         }
     }
 }

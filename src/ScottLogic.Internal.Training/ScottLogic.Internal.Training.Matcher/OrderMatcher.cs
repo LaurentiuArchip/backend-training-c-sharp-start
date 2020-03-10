@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 namespace ScottLogic.Internal.Training.Matcher
 {
@@ -18,32 +15,37 @@ namespace ScottLogic.Internal.Training.Matcher
 
         public bool ProcessOrder(Order currentOrder)
         {
-            bool orderProcessed = false;
+            var orderProcessed = false;
             // No existing order to match against
-            if (ExistingOrders.Count == 0)
+            if (!ExistingOrders.Any())
             {
                 ExistingOrders.Add(currentOrder);
             }
             else
             {
                 // Get orders with opposite action, and account Number different than the current Order
-                List<Order> oppositeOrders = ExistingOrders.FindAll(order => order.action != currentOrder.action && order.accountNumber != currentOrder.accountNumber);
+                var oppositeOrders = ExistingOrders
+                    .Where(order => order.Action != currentOrder.Action && order.AccountNumber != currentOrder.AccountNumber)
+                    .ToList();
 
                 // No orders with opposite action
-                if (oppositeOrders.Count == 0)
+                if (!oppositeOrders.Any())
                 {
                     ExistingOrders.Add(currentOrder);
                 }
                 else
                 {
                     // Existing orders with opposite action, try a trade
-                    if (currentOrder.action == "sell")
+                    if (currentOrder.Action == "sell")
                     {
-                        oppositeOrders = oppositeOrders.OrderByDescending(order => order.price).ThenBy(order => order.timeRank).ToList();
-                        
                         // Find all possible matches
-                        oppositeOrders = oppositeOrders.Where(order => order.price >= currentOrder.price).ToList();
-                        if (oppositeOrders.Count == 0)
+                        oppositeOrders = oppositeOrders
+                            .Where(order => order.Price >= currentOrder.Price)
+                            .OrderByDescending(order => order.Price)
+                            .ThenBy(order => order.TimeRank)
+                            .ToList();
+                        
+                        if (!oppositeOrders.Any())
                         {
                             ExistingOrders.Add(currentOrder);
                         }
@@ -54,11 +56,14 @@ namespace ScottLogic.Internal.Training.Matcher
                     }
                     else  // Action == Buy
                     {
-                        oppositeOrders = oppositeOrders.OrderBy(order => order.price).ThenBy(order => order.timeRank).ToList();
-                        
-                        // Find all possible matches
-                        oppositeOrders = oppositeOrders.Where(order => order.price <= currentOrder.price).ToList();
-                        if (oppositeOrders.Count == 0)
+                       // Find all possible matches
+                        oppositeOrders = oppositeOrders
+                            .Where(order => order.Price <= currentOrder.Price)
+                            .OrderBy(order => order.Price)
+                            .ThenBy(order => order.TimeRank)
+                            .ToList();
+
+                        if (!oppositeOrders.Any())
                         {
                             ExistingOrders.Add(currentOrder);
                         }
@@ -74,88 +79,87 @@ namespace ScottLogic.Internal.Training.Matcher
 
         private bool SellTrade(Order currentOrder, List<Order> oppositeOrders)
         {
-            bool orderProcessed = false;
+            var orderProcessed = false;
             // 1. Sell entire quantity in one transaction
             // 2. Sell entire quantity in more than one transaction
             // 3. Order has quantity unsold
 
             // Create a Trade
-            CurrentTrade = new Trade(currentOrder.accountNumber, 0, currentOrder.price, currentOrder.action);
-            for (int i = 0; i < oppositeOrders.Count; i++)
+            CurrentTrade = new Trade(currentOrder.AccountNumber, 0, currentOrder.Price, currentOrder.Action);
+            for (var i = 0; i < oppositeOrders.Count; i++)
             {
                 orderProcessed = true;
-                if (currentOrder.quantity <= oppositeOrders[i].quantity)
+                if (currentOrder.Quantity <= oppositeOrders[i].Quantity)
                 {
-                    int index = ExistingOrders.IndexOf(oppositeOrders.Single(order => order.timeRank == oppositeOrders[i].timeRank));
-                    if (currentOrder.quantity != oppositeOrders[i].quantity)
+                    if (currentOrder.Quantity != oppositeOrders[i].Quantity)
                     {
                         // Update the other order
-                        ExistingOrders[index].quantity -= currentOrder.quantity;
+                        var index = ExistingOrders.IndexOf(oppositeOrders.Single(order => order.TimeRank == oppositeOrders[i].TimeRank));
+                        ExistingOrders[index].Quantity -= currentOrder.Quantity;
                     }
                     else
                     {
                         // Remove the other order
-                        ExistingOrders = ExistingOrders.Where(order => order.timeRank != oppositeOrders[i].timeRank).ToList();
+                        ExistingOrders = ExistingOrders.Where(order => order.TimeRank != oppositeOrders[i].TimeRank).ToList();
                     }
-                    CurrentTrade.quantity += currentOrder.quantity;
-                    currentOrder.quantity = 0;
-                    break;
+                    CurrentTrade.Quantity += currentOrder.Quantity;
+                    currentOrder.Quantity = 0;
                 }
                 // We sell more than the current match
                 else
                 {
                     // partial match - current order sells more than the demand
                     // Sell the amount required, delete that order, update current order
-                    int tradeQuantity = oppositeOrders[i].quantity;
-                    currentOrder.quantity -= tradeQuantity;
+                    var tradeQuantity = oppositeOrders[i].Quantity;
+                    currentOrder.Quantity -= tradeQuantity;
                     // Remove the other order
-                    ExistingOrders = ExistingOrders.Where(order => order.timeRank != oppositeOrders[i].timeRank).ToList();
-                    CurrentTrade.quantity += tradeQuantity;
+                    ExistingOrders = ExistingOrders.Where(order => order.TimeRank != oppositeOrders[i].TimeRank).ToList();
+                    CurrentTrade.Quantity += tradeQuantity;
                 }
             }
             // Current order was not fully processed 
-            if (currentOrder.quantity > 0)
+            if (currentOrder.Quantity > 0)
             {
                 ExistingOrders.Add(currentOrder);
             }
             return orderProcessed;
         }
 
-        bool BuyTrade(Order currentOrder, List<Order> oppositeOrders)
+        private bool BuyTrade(Order currentOrder, List<Order> oppositeOrders)
         {
-            bool orderProcessed = false;
+            var orderProcessed = false;
 
             // 1. Buy the entire quantity in one transaction
             // 2. Buy the entire quantity in more than one transaction
             // 3. Order still has quantity to buy
 
             // Create a Trade
-            CurrentTrade = new Trade(currentOrder.accountNumber, 0, currentOrder.price, currentOrder.action);
-            for (int i = 0; i < oppositeOrders.Count && currentOrder.quantity > 0; i++)
+            CurrentTrade = new Trade(currentOrder.AccountNumber, 0, currentOrder.Price, currentOrder.Action);
+            for (var i = 0; i < oppositeOrders.Count && currentOrder.Quantity > 0; i++)
             {
                 orderProcessed = true;
                 // We buy equal or more than the current match
-                if (currentOrder.quantity >= oppositeOrders[i].quantity)
+                if (currentOrder.Quantity >= oppositeOrders[i].Quantity)
                 {
                     // Remove order from list of existing orders
-                    ExistingOrders = ExistingOrders.Where(order => order.timeRank != oppositeOrders[i].timeRank).ToList();
-                    currentOrder.quantity -= oppositeOrders[i].quantity;
-                    CurrentTrade.quantity += oppositeOrders[i].quantity;
+                    ExistingOrders = ExistingOrders.Where(order => order.TimeRank != oppositeOrders[i].TimeRank).ToList();
+                    currentOrder.Quantity -= oppositeOrders[i].Quantity;
+                    CurrentTrade.Quantity += oppositeOrders[i].Quantity;
 
                 }
                 else
                 {
                     // Existing order need to be updated
-                    int index = ExistingOrders.IndexOf(oppositeOrders.Single(order => order.timeRank == oppositeOrders[i].timeRank));
-                    ExistingOrders[index].quantity -= currentOrder.quantity;
+                    var index = ExistingOrders.IndexOf(oppositeOrders.Single(order => order.TimeRank == oppositeOrders[i].TimeRank));
+                    ExistingOrders[index].Quantity -= currentOrder.Quantity;
 
                     // Update the trade
-                    CurrentTrade.quantity += currentOrder.quantity;
+                    CurrentTrade.Quantity += currentOrder.Quantity;
                     // Update current Order
-                    currentOrder.quantity = 0;
+                    currentOrder.Quantity = 0;
                 }
                 // Current order was not fully processed 
-                if (currentOrder.quantity > 0)
+                if (currentOrder.Quantity > 0)
                 {
                     ExistingOrders.Add(currentOrder);
                 }

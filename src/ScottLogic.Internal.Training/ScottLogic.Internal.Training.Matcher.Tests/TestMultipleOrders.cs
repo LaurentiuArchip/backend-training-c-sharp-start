@@ -8,7 +8,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
     public class TestMultipleOrders
     {
         [Fact]
-        public void SellTradeByTimeRank()
+        public void SellOrder_ExistingOrdersByTimeRank_OldestOrderProcessed()
         {
             OrderMatcher currentMatcher = new OrderMatcher();
             Order currentOrder1 = new Order(1001, 45, 55, "buy", 13);

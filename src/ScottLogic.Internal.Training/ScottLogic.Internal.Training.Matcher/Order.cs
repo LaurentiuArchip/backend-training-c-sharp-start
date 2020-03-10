@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace ScottLogic.Internal.Training.Matcher
 {
-    public class Order
+    public class Order : IEquatable<Order>
     {
         public int accountNumber { get; }
-        private int quantity;
+        public int quantity { get; set; }
         public int price { get; }
         public string action { get; }
         public int timeRank {get;}
@@ -21,5 +22,18 @@ namespace ScottLogic.Internal.Training.Matcher
             this.timeRank = timeRank;
         }
 
+        public bool Equals(Order other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return (
+                this.accountNumber == other.accountNumber &&
+                this.quantity == other.quantity &&
+                this.price == other.price &&
+                this.action == other.action);
+        }
     }
 }

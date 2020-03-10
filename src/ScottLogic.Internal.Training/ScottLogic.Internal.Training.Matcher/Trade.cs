@@ -6,14 +6,18 @@ namespace ScottLogic.Internal.Training.Matcher
 {
     public class Trade
     {
-        // something
-        private Order currentOrder;
+        private int accountNumber;
+        public int quantity { get; set; }
+        private int price;
+        private string action;
 
 
-        public Trade()
+        public Trade(int accountNumber, int quantity, int price, string action)
         {
-            currentOrder = new Order(1001, 45, 55, "buy", 12);
+            this.accountNumber = accountNumber;
+            this.quantity = quantity;
+            this.price = price;
+            this.action = action;
         }
-            
     }
 }

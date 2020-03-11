@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScottLogic.Internal.Training.Matcher", "ScottLogic.Internal.Training.Matcher\ScottLogic.Internal.Training.Matcher.csproj", "{A0BA16E4-B839-480F-80D2-F52A743718DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScottLogic.Internal.Training.Api", "ScottLogic.Internal.Training.Api\ScottLogic.Internal.Training.Api.csproj", "{8F078005-1745-48E2-B576-CCF7F489AE03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScottLogic.Internal.Training.Api", "ScottLogic.Internal.Training.Api\ScottLogic.Internal.Training.Api.csproj", "{8F078005-1745-48E2-B576-CCF7F489AE03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScottLogic.Internal.Training.Api.Tests", "ScottLogic.Internal.Training.Api.Tests\ScottLogic.Internal.Training.Api.Tests.csproj", "{835DB048-28E8-4258-8457-6C48466EDA0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScottLogic.Internal.Training.Api.Tests", "ScottLogic.Internal.Training.Api.Tests\ScottLogic.Internal.Training.Api.Tests.csproj", "{835DB048-28E8-4258-8457-6C48466EDA0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScottLogic.Internal.Training.Matcher.Tests", "ScottLogic.Internal.Training.Matcher.Tests\ScottLogic.Internal.Training.Matcher.Tests.csproj", "{26CACC4E-015B-475A-BBE7-228D1DDF2EBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScottLogic.Internal.Training.Matcher.Tests", "ScottLogic.Internal.Training.Matcher.Tests\ScottLogic.Internal.Training.Matcher.Tests.csproj", "{26CACC4E-015B-475A-BBE7-228D1DDF2EBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

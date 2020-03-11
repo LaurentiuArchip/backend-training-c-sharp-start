@@ -4,22 +4,12 @@ using Xunit;
 
 namespace ScottLogic.Internal.Training.Matcher.Tests
 {
-    public class MatcherTests
-    {
-        [Fact]
-        public void MatcherExists()
-        {
-            var currentMatcher = new OrderMatcher();
-            Assert.IsType<OrderMatcher>(currentMatcher);
-        }
-    }
-
     public class ProcessOrder
     {
         [Fact]
         public void AddBuyOrder_EmptyMatcher_OneOrderAdded()
         {
-            var currentOrder = new Order(1001, 45, 55, "buy", 13);
+            var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 13);
             var currentMatcher = new OrderMatcher();
             currentMatcher.ProcessOrder(currentOrder);
             Assert.Same(currentOrder, currentMatcher.ExistingOrders[0]);
@@ -28,7 +18,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         [Fact]
         public void AddSellOrder_EmptyMatcher_OneOrderAdded()
         {
-            var currentOrder = new Order(1001, 45, 55, "sell", 13);
+            var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 13);
             var currentMatcher = new OrderMatcher();
             currentMatcher.ProcessOrder(currentOrder);
             Assert.Same(currentOrder, currentMatcher.ExistingOrders[0]);
@@ -38,126 +28,165 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         public void AddSellOrder_OneExistingOrder_MatcherWithTwoOrders()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 45, 55, "sell", 14);
-            var currentOrder2 = new Order(1002, 46, 56, "sell", 15);
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Sell, 14);
+            var currentOrder2 = new Order(1002, 46, 56, OrderType.Sell, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var orders = new List<Order>() { currentOrder1, currentOrder2 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
 
         [Fact]
         public void AddBuyOrder_OneExistingOrder_MatcherWithTwoOrders()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 45, 55, "buy", 14);
-            var currentOrder2 = new Order(1002, 46, 56, "buy", 15);
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Buy, 14);
+            var currentOrder2 = new Order(1002, 46, 56, OrderType.Buy, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var orders = new List<Order>() { currentOrder1, currentOrder2 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
+    }
 
+    public class TradeOrder { }
+
+    public class SellTrade
+    {
         [Fact]
         public void AddSellOrder_PerfectMatch_ExistingOrdersEmpty()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 45, 55, "buy", 14);
-            var currentOrder2 = new Order(1002, 45, 55, "sell", 15);
-            currentMatcher.ProcessOrder(currentOrder1);
-            currentMatcher.ProcessOrder(currentOrder2);
-            var orders = new List<Order>() {};
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
-        }
-
-        [Fact]
-        public void AddBuyOrder_PerfectMatch_ExistingOrdersEmpty()
-        {
-            var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 45, 55, "sell", 14);
-            var currentOrder2 = new Order(1002, 45, 55, "buy", 15);
-            currentMatcher.ProcessOrder(currentOrder1);
-            currentMatcher.ProcessOrder(currentOrder2);
-            var orders = new List<Order>() { };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Buy, 14);
+            var currentOrder2 = new Order(1002, 45, 55, OrderType.Sell, 15);
+            currentMatcher.ExistingOrders.Add(currentOrder1);
+            var oppositeOrders = new List<Order>(){currentOrder1};
+            currentMatcher.SellTrade(currentOrder2, oppositeOrders);
+            Assert.Empty(currentMatcher.ExistingOrders);
         }
 
         [Fact]
         public void AddSellOrder_SellLess_PartialMatch()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 55, 55, "buy", 13);
-            var currentOrder2 = new Order(1002, 45, 55, "sell", 14);
+            var currentOrder1 = new Order(1001, 55, 55, OrderType.Buy, 13);
+            var currentOrder2 = new Order(1002, 45, 55, OrderType.Sell, 14);
 
-            currentMatcher.ProcessOrder(currentOrder1);
-            currentMatcher.ProcessOrder(currentOrder2);
-
-            var currentOrder4 = new Order(1001, 10, 55, "buy", 13);
-
+            currentMatcher.ExistingOrders.Add(currentOrder1);
+            var oppositeOrders = new List<Order>() { currentOrder1 };
+            currentMatcher.SellTrade(currentOrder2, oppositeOrders);
+            var currentOrder4 = new Order(1001, 10, 55, OrderType.Buy, 13);
+            
             var orders = new List<Order>() { currentOrder4 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
-        }
-
-        [Fact]
-        public void AddBuyOrder_BuyLess_PartialMatch()
-        {
-            var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 55, 55, "sell", 13);
-            var currentOrder2 = new Order(1002, 45, 55, "buy", 14);
-
-            currentMatcher.ProcessOrder(currentOrder1);
-            currentMatcher.ProcessOrder(currentOrder2);
-
-            var currentOrder4 = new Order(1001, 10, 55, "sell", 13);
-
-            var orders = new List<Order>() { currentOrder4 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
 
         [Fact]
         public void AddSellOrder_SellMore_PartialMatch()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 55, 55, "buy", 13);
-            var currentOrder2 = new Order(1002, 65, 55, "sell", 14);
+            var currentOrder1 = new Order(1001, 55, 55, OrderType.Buy, 13);
+            var currentOrder2 = new Order(1002, 65, 55, OrderType.Sell, 14);
 
-            currentMatcher.ProcessOrder(currentOrder1);
-            currentMatcher.ProcessOrder(currentOrder2);
-
-            var currentOrder4 = new Order(1002, 10, 55, "sell", 14);
+            currentMatcher.ExistingOrders.Add(currentOrder1);
+            var oppositeOrders = new List<Order>() { currentOrder1 };
+            currentMatcher.SellTrade(currentOrder2, oppositeOrders);
+            var currentOrder4 = new Order(1002, 10, 55, OrderType.Sell, 14);
 
             var orders = new List<Order>() { currentOrder4 };
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
+        }
+
+        [Fact]
+        public void SellOrder_ExistingOrdersByTimeRank_OldestOrderProcessed()
+        {
+            var currentMatcher = new OrderMatcher();
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Buy, 13);
+            var currentOrder2 = new Order(1002, 46, 56, OrderType.Buy, 14);
+            var currentOrder3 = new Order(1003, 46, 56, OrderType.Buy, 4);
+            var currentOrder4 = new Order(1004, 46, 56, OrderType.Buy, 1);
+            var currentOrder5 = new Order(1005, 46, 56, OrderType.Sell, 15);
+            currentMatcher.ExistingOrders.Add(currentOrder1);
+            currentMatcher.ExistingOrders.Add(currentOrder2);
+            currentMatcher.ExistingOrders.Add(currentOrder3);
+            currentMatcher.ExistingOrders.Add(currentOrder4);
+            var oppositeOrders = new List<Order>() { currentOrder4, currentOrder3, currentOrder1, currentOrder2 };
+            currentMatcher.SellTrade(currentOrder5, oppositeOrders);
+            var orders = new List<Order>() { currentOrder1, currentOrder2, currentOrder3 };
             Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+        }
+    }
+
+    public class BuyTrade
+    {
+        [Fact]
+        public void AddBuyOrder_PerfectMatch_ExistingOrdersEmpty()
+        {
+            var currentMatcher = new OrderMatcher();
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Sell, 14);
+            var currentOrder2 = new Order(1002, 45, 55, OrderType.Buy, 15);
+            currentMatcher.ExistingOrders.Add(currentOrder1);
+            var oppositeOrders = new List<Order>() { currentOrder1 };
+            currentMatcher.BuyTrade(currentOrder2, oppositeOrders);
+            Assert.Empty(currentMatcher.ExistingOrders);
+        }
+
+        [Fact]
+        public void AddBuyOrder_BuyLess_PartialMatch()
+        {
+            var currentMatcher = new OrderMatcher();
+            var currentOrder1 = new Order(1001, 55, 55, OrderType.Sell, 13);
+            var currentOrder2 = new Order(1002, 45, 55, OrderType.Buy, 14);
+
+            currentMatcher.ExistingOrders.Add(currentOrder1);
+            var oppositeOrders = new List<Order>() { currentOrder1 };
+            currentMatcher.BuyTrade(currentOrder2, oppositeOrders);
+            var currentOrder4 = new Order(1001, 10, 55, OrderType.Sell, 13);
+
+            var orders = new List<Order>() { currentOrder4 };
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
 
         [Fact]
         public void AddBuyOrder_BuyMore_PartialMatch()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 55, 55, "sell", 13);
-            var currentOrder2 = new Order(1002, 65, 55, "buy", 14);
+            var currentOrder1 = new Order(1001, 55, 55, OrderType.Sell, 13);
+            var currentOrder2 = new Order(1002, 65, 55, OrderType.Buy, 14);
 
-            currentMatcher.ProcessOrder(currentOrder1);
-            currentMatcher.ProcessOrder(currentOrder2);
-
-            var currentOrder4 = new Order(1002, 10, 55, "buy", 14);
+            currentMatcher.ExistingOrders.Add(currentOrder1);
+            var oppositeOrders = new List<Order>() { currentOrder1 };
+            currentMatcher.BuyTrade(currentOrder2, oppositeOrders);
+            var currentOrder4 = new Order(1002, 10, 55, OrderType.Buy, 14);
 
             var orders = new List<Order>() { currentOrder4 };
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
+        }
+
+        [Fact]
+        public void BuyOrder_ExistingOrdersByTimeRank_OldestOrderProcessed()
+        {
+            var currentMatcher = new OrderMatcher();
+            var currentOrder1 = new Order(1001, 46, 56, OrderType.Sell, 13);
+            var currentOrder2 = new Order(1002, 46, 56, OrderType.Sell, 14);
+            var currentOrder3 = new Order(1003, 46, 56, OrderType.Sell, 4);
+            var currentOrder4 = new Order(1004, 46, 56, OrderType.Sell, 1);
+            var currentOrder5 = new Order(1005, 46, 56, OrderType.Buy, 15);
+            currentMatcher.ExistingOrders.Add(currentOrder1);
+            currentMatcher.ExistingOrders.Add(currentOrder2);
+            currentMatcher.ExistingOrders.Add(currentOrder3);
+            currentMatcher.ExistingOrders.Add(currentOrder4);
+            var oppositeOrders = new List<Order>() { currentOrder4, currentOrder3, currentOrder1, currentOrder2 };
+            currentMatcher.BuyTrade(currentOrder5, oppositeOrders);
+            var orders = new List<Order>() { currentOrder1, currentOrder2, currentOrder3 };
             Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
         }
     }
-
+    
     public class ReturnTrade
     {
         [Fact]
-        public void TradeExists()
-        {
-            var currentTrade = new Trade(0, 0, 0, "buy");
-            Assert.IsType<Trade>(currentTrade);
-        }
-
-        [Fact]
-        public void GetNullTrade()
+        public void EmptyMatcher_NullTrade()
         {
             var currentMatcher = new OrderMatcher();
             Assert.Null(currentMatcher.CurrentTrade);
@@ -166,7 +195,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         [Fact]
         public void AddSellOrder_EmptyMatcher_NullTrade()
         {
-            var currentOrder = new Order(1001, 45, 55, "sell", 13);
+            var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 13);
             var currentMatcher = new OrderMatcher();
             currentMatcher.ProcessOrder(currentOrder);
             var currentTrade = currentMatcher.CurrentTrade;
@@ -176,7 +205,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         [Fact]
         public void AddBuyOrder_EmptyMatcher_NullTrade()
         {
-            var currentOrder = new Order(1001, 45, 55, "buy", 13);
+            var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 13);
             var currentMatcher = new OrderMatcher();
             currentMatcher.ProcessOrder(currentOrder);
             var currentTrade = currentMatcher.CurrentTrade;
@@ -187,8 +216,8 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         public void AddSellOrder_PerfectMatch_NewTrade()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 45, 55, "buy", 14);
-            var currentOrder2 = new Order(1002, 45, 55, "sell", 15);
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Buy, 14);
+            var currentOrder2 = new Order(1002, 45, 55, OrderType.Sell, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
@@ -200,8 +229,8 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         public void AddBuyOrder_PerfectMatch_NewTrade()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 45, 55, "sell", 14);
-            var currentOrder2 = new Order(1002, 45, 55, "buy", 15);
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Sell, 14);
+            var currentOrder2 = new Order(1002, 45, 55, OrderType.Buy, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
@@ -213,8 +242,8 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         public void AddSellOrder_SellMore_PartialMatch_NewTrade()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 45, 55, "buy", 14);
-            var currentOrder2 = new Order(1002, 55, 55, "sell", 15);
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Buy, 14);
+            var currentOrder2 = new Order(1002, 55, 55, OrderType.Sell, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
@@ -226,8 +255,8 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         public void AddBuyOrder_SellMore_PartialMatch_NewTrade()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 45, 55, "sell", 14);
-            var currentOrder2 = new Order(1002, 55, 55, "buy", 15);
+            var currentOrder1 = new Order(1001, 45, 55, OrderType.Sell, 14);
+            var currentOrder2 = new Order(1002, 55, 55, OrderType.Buy, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
@@ -239,8 +268,8 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         public void AddSellOrder_SellLess_PartialMatch_NewTrade()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 65, 55, "buy", 14);
-            var currentOrder2 = new Order(1002, 55, 55, "sell", 15);
+            var currentOrder1 = new Order(1001, 65, 55, OrderType.Buy, 14);
+            var currentOrder2 = new Order(1002, 55, 55, OrderType.Sell, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
@@ -252,8 +281,8 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         public void AddBuyOrder_BuyLess_PartialMatch_NewTrade()
         {
             var currentMatcher = new OrderMatcher();
-            var currentOrder1 = new Order(1001, 65, 55, "sell", 14);
-            var currentOrder2 = new Order(1002, 55, 55, "buy", 15);
+            var currentOrder1 = new Order(1001, 65, 55, OrderType.Sell, 14);
+            var currentOrder2 = new Order(1002, 55, 55, OrderType.Buy, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;

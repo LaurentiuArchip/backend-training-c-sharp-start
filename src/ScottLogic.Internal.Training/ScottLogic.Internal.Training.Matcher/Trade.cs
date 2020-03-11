@@ -4,27 +4,27 @@ namespace ScottLogic.Internal.Training.Matcher
 {
     public class Trade : IEquatable<Trade>
     {
-        private int AccountNumber;
+        private readonly int _accountNumber;
+        private readonly int _price;
+        private readonly OrderType _action;
         public int Quantity { get; set; }
-        private int Price;
-        private string Action;
 
 
-        public Trade(int accountNumber, int quantity, int price, string action)
+        public Trade(int accountNumber, int quantity, int price, OrderType action)
         {
-            AccountNumber = accountNumber;
+            _accountNumber = accountNumber;
             Quantity = quantity;
-            Price = price;
-            Action = action;
+            _price = price;
+            _action = action;
         }
 
         public bool Equals(Trade other)
         {
             return other != null &&
-                   AccountNumber == other.AccountNumber &&
+                   _accountNumber == other._accountNumber &&
                    Quantity == other.Quantity &&
-                   Price == other.Price &&
-                   Action == other.Action;
+                   _price == other._price &&
+                   _action == other._action;
         }
     }
 }

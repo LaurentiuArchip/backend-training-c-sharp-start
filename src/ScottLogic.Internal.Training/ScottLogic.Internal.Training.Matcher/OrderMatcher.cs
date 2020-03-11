@@ -8,11 +8,6 @@ namespace ScottLogic.Internal.Training.Matcher
         public Trade CurrentTrade { get; set; }
         public List<Order> ExistingOrders { get; set; } = new List<Order>();
 
-        public OrderMatcher()
-        {
-            CurrentTrade = null;
-        }
-
         public bool ProcessOrder(Order currentOrder)
         {
             var orderProcessed = false;
@@ -35,49 +30,56 @@ namespace ScottLogic.Internal.Training.Matcher
                 }
                 else
                 {
-                    // Existing orders with opposite action, try a trade
-                    if (currentOrder.Action == "sell")
-                    {
-                        // Find all possible matches
-                        oppositeOrders = oppositeOrders
-                            .Where(order => order.Price >= currentOrder.Price)
-                            .OrderByDescending(order => order.Price)
-                            .ThenBy(order => order.TimeRank)
-                            .ToList();
-                        
-                        if (!oppositeOrders.Any())
-                        {
-                            ExistingOrders.Add(currentOrder);
-                        }
-                        else
-                        {
-                            orderProcessed = SellTrade(currentOrder, oppositeOrders);
-                        }
-                    }
-                    else  // Action == Buy
-                    {
-                       // Find all possible matches
-                        oppositeOrders = oppositeOrders
-                            .Where(order => order.Price <= currentOrder.Price)
-                            .OrderBy(order => order.Price)
-                            .ThenBy(order => order.TimeRank)
-                            .ToList();
-
-                        if (!oppositeOrders.Any())
-                        {
-                            ExistingOrders.Add(currentOrder);
-                        }
-                        else
-                        {
-                            orderProcessed = BuyTrade(currentOrder, oppositeOrders);
-                        }
-                    }
+                    orderProcessed = TradeOrder(currentOrder, oppositeOrders);
                 }
             }
             return orderProcessed;
         }
 
-        private bool SellTrade(Order currentOrder, List<Order> oppositeOrders)
+        private bool TradeOrder(Order currentOrder, List<Order> oppositeOrders)
+        {
+            var orderProcessed = false;
+            // Existing orders with opposite action, try a trade
+            if (currentOrder.Action == OrderType.Sell)
+            {
+                // Find all possible matches
+                oppositeOrders = oppositeOrders
+                    .Where(order => order.Price >= currentOrder.Price)
+                    .OrderByDescending(order => order.Price)
+                    .ThenBy(order => order.TimeRank)
+                    .ToList();
+
+                if (!oppositeOrders.Any())
+                {
+                    ExistingOrders.Add(currentOrder);
+                }
+                else
+                {
+                    orderProcessed = SellTrade(currentOrder, oppositeOrders);
+                }
+            }
+            else if (currentOrder.Action == OrderType.Buy) // Action == Buy
+            {
+                // Find all possible matches
+                oppositeOrders = oppositeOrders
+                    .Where(order => order.Price <= currentOrder.Price)
+                    .OrderBy(order => order.Price)
+                    .ThenBy(order => order.TimeRank)
+                    .ToList();
+
+                if (!oppositeOrders.Any())
+                {
+                    ExistingOrders.Add(currentOrder);
+                }
+                else
+                {
+                    orderProcessed = BuyTrade(currentOrder, oppositeOrders);
+                }
+            }
+            return orderProcessed;
+        }
+
+        public bool SellTrade(Order currentOrder, List<Order> oppositeOrders)
         {
             var orderProcessed = false;
             // 1. Sell entire quantity in one transaction
@@ -125,7 +127,7 @@ namespace ScottLogic.Internal.Training.Matcher
             return orderProcessed;
         }
 
-        private bool BuyTrade(Order currentOrder, List<Order> oppositeOrders)
+        public bool BuyTrade(Order currentOrder, List<Order> oppositeOrders)
         {
             var orderProcessed = false;
 

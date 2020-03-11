@@ -10,7 +10,6 @@ namespace ScottLogic.Internal.Training.Matcher
 
         public OrderMatcher()
         {
-            CurrentTrade = null;
         }
 
         public bool ProcessOrder(Order currentOrder)

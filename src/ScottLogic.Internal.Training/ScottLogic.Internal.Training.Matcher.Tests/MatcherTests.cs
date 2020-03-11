@@ -4,16 +4,6 @@ using Xunit;
 
 namespace ScottLogic.Internal.Training.Matcher.Tests
 {
-    public class MatcherTests
-    {
-        [Fact]
-        public void MatcherExists()
-        {
-            var currentMatcher = new OrderMatcher();
-            Assert.IsType<OrderMatcher>(currentMatcher);
-        }
-    }
-
     public class ProcessOrder
     {
         [Fact]
@@ -43,7 +33,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var orders = new List<Order>() { currentOrder1, currentOrder2 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
 
         [Fact]
@@ -55,7 +45,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var orders = new List<Order>() { currentOrder1, currentOrder2 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
 
         [Fact]
@@ -66,8 +56,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentOrder2 = new Order(1002, 45, 55, "sell", 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
-            var orders = new List<Order>() {};
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Empty(currentMatcher.ExistingOrders);
         }
 
         [Fact]
@@ -78,8 +67,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentOrder2 = new Order(1002, 45, 55, "buy", 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
-            var orders = new List<Order>() { };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Empty(currentMatcher.ExistingOrders);
         }
 
         [Fact]
@@ -95,7 +83,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentOrder4 = new Order(1001, 10, 55, "buy", 13);
 
             var orders = new List<Order>() { currentOrder4 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
 
         [Fact]
@@ -111,7 +99,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentOrder4 = new Order(1001, 10, 55, "sell", 13);
 
             var orders = new List<Order>() { currentOrder4 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
 
         [Fact]
@@ -127,7 +115,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentOrder4 = new Order(1002, 10, 55, "sell", 14);
 
             var orders = new List<Order>() { currentOrder4 };
-            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
 
         [Fact]
@@ -143,6 +131,42 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentOrder4 = new Order(1002, 10, 55, "buy", 14);
 
             var orders = new List<Order>() { currentOrder4 };
+            Assert.Equal(orders, currentMatcher.ExistingOrders);
+        }
+
+        [Fact]
+        public void SellOrder_ExistingOrdersByTimeRank_OldestOrderProcessed()
+        {
+            var currentMatcher = new OrderMatcher();
+            var currentOrder1 = new Order(1001, 45, 55, "buy", 13);
+            var currentOrder2 = new Order(1002, 46, 56, "buy", 14);
+            var currentOrder3 = new Order(1003, 46, 56, "buy", 4);
+            var currentOrder4 = new Order(1004, 46, 56, "buy", 1);
+            var currentOrder5 = new Order(1005, 46, 56, "sell", 15);
+            currentMatcher.ProcessOrder(currentOrder1);
+            currentMatcher.ProcessOrder(currentOrder2);
+            currentMatcher.ProcessOrder(currentOrder3);
+            currentMatcher.ProcessOrder(currentOrder4);
+            currentMatcher.ProcessOrder(currentOrder5);
+            var orders = new List<Order>() { currentOrder1, currentOrder2, currentOrder3 };
+            Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
+        }
+
+        [Fact]
+        public void BuyOrder_ExistingOrdersByTimeRank_OldestOrderProcessed()
+        {
+            var currentMatcher = new OrderMatcher();
+            var currentOrder1 = new Order(1001, 46, 56, "sell", 13);
+            var currentOrder2 = new Order(1002, 46, 56, "sell", 14);
+            var currentOrder3 = new Order(1003, 46, 56, "sell", 4);
+            var currentOrder4 = new Order(1004, 46, 56, "sell", 1);
+            var currentOrder5 = new Order(1005, 46, 56, "buy", 15);
+            currentMatcher.ProcessOrder(currentOrder1);
+            currentMatcher.ProcessOrder(currentOrder2);
+            currentMatcher.ProcessOrder(currentOrder3);
+            currentMatcher.ProcessOrder(currentOrder4);
+            currentMatcher.ProcessOrder(currentOrder5);
+            var orders = new List<Order>() { currentOrder1, currentOrder2, currentOrder3 };
             Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
         }
     }
@@ -150,14 +174,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
     public class ReturnTrade
     {
         [Fact]
-        public void TradeExists()
-        {
-            var currentTrade = new Trade(0, 0, 0, "buy");
-            Assert.IsType<Trade>(currentTrade);
-        }
-
-        [Fact]
-        public void GetNullTrade()
+        public void EmptyMatcher_NullTrade()
         {
             var currentMatcher = new OrderMatcher();
             Assert.Null(currentMatcher.CurrentTrade);

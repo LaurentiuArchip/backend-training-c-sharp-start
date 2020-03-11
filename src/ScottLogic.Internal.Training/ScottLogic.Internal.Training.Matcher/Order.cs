@@ -8,7 +8,7 @@ namespace ScottLogic.Internal.Training.Matcher
         public int Quantity { get; set; }
         public int Price { get; }
         public string Action { get; }
-        public int TimeRank {get;}
+        public int TimeRank {get; }
 
         public Order(int accountNumber, int quantity, int price, string action, int timeRank)
         {

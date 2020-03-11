@@ -79,7 +79,7 @@ namespace ScottLogic.Internal.Training.Matcher
             return orderProcessed;
         }
 
-        private bool SellTrade(Order currentOrder, List<Order> oppositeOrders)
+        public bool SellTrade(Order currentOrder, List<Order> oppositeOrders)
         {
             var orderProcessed = false;
             // 1. Sell entire quantity in one transaction
@@ -127,7 +127,7 @@ namespace ScottLogic.Internal.Training.Matcher
             return orderProcessed;
         }
 
-        private bool BuyTrade(Order currentOrder, List<Order> oppositeOrders)
+        public bool BuyTrade(Order currentOrder, List<Order> oppositeOrders)
         {
             var orderProcessed = false;
 

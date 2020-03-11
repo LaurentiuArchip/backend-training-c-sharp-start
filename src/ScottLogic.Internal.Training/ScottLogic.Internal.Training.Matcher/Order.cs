@@ -2,15 +2,22 @@
 
 namespace ScottLogic.Internal.Training.Matcher
 {
+    public enum OrderType
+    {
+        None,
+        Buy,
+        Sell
+    }
     public class Order : IEquatable<Order>
     {
         public int AccountNumber { get; }
         public int Quantity { get; set; }
         public int Price { get; }
-        public string Action { get; }
+        public OrderType Action { get; }
         public int TimeRank {get; }
 
-        public Order(int accountNumber, int quantity, int price, string action, int timeRank)
+        
+        public Order(int accountNumber, int quantity, int price, OrderType action, int timeRank)
         {
             AccountNumber = accountNumber;
             Quantity = quantity;

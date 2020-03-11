@@ -6,11 +6,11 @@ namespace ScottLogic.Internal.Training.Matcher
     {
         private readonly int _accountNumber;
         private readonly int _price;
-        private readonly string _action;
+        private readonly OrderType _action;
         public int Quantity { get; set; }
 
 
-        public Trade(int accountNumber, int quantity, int price, string action)
+        public Trade(int accountNumber, int quantity, int price, OrderType action)
         {
             _accountNumber = accountNumber;
             Quantity = quantity;

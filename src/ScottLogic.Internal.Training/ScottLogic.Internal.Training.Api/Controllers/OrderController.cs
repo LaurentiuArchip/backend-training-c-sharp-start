@@ -4,15 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileSystemGlobbing;
+using ScottLogic.Internal.Training.Matcher;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
-    public class OrderController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OrderController : ControllerBase
     {
-        public ActionResult Get()
+        // GET api/values
+        [HttpGet]
+        public IActionResult Get()
         {
-            var currentMatcher = new OrderMatcher();
-            return currentMatcher.ExistingOrders;
+            return Ok(new string[] { "value1", "value2" });
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ScottLogic.Internal.Training.Matcher
 {
-    public class OrderMatcher
+    public class OrderMatcher : IOrderMatcher
     {
         public Trade CurrentTrade { get; set; }
         public List<Order> ExistingOrders { get; set; } = new List<Order>();

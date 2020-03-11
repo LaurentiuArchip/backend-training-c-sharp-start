@@ -16,7 +16,7 @@ namespace ScottLogic.Internal.Training.Matcher
         public OrderType Action { get; }
         public int TimeRank {get; }
 
-        
+        public Order() { }
         public Order(int accountNumber, int quantity, int price, OrderType action, int timeRank)
         {
             AccountNumber = accountNumber;

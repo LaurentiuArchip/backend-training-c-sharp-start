@@ -35,9 +35,19 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [Route("buy")]
         public IActionResult Buy([FromBody] Order currentOrder)
         {
-            //Order currentOrder1 = JsonSerializer.Deserialize<Order>(currentOrder);
-            _matcher.ProcessOrder(currentOrder);
-            return Ok("processed");
+            if (currentOrder.Action == OrderType.Buy)
+            {
+                var status = _matcher.ProcessOrder(currentOrder);
+                if (status)
+                {
+                    return Ok("Match found, Trade created");
+                }
+                return Ok("Match not found, Order added to Existing Orders");
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // POST api/orders/sell
@@ -45,12 +55,19 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [Route("sell")]
         public IActionResult Sell([FromBody] Order currentOrder)
         {
-            var status = _matcher.ProcessOrder(currentOrder);
-           if (status)
-           {
-               return Ok("Match found, Trade created");
-           }
-           return Ok("Match not found, Order added to Existing Orders");
+            if (currentOrder.Action == OrderType.Sell)
+            {
+                var status = _matcher.ProcessOrder(currentOrder);
+               if (status)
+               {
+                   return Ok("Match found, Trade created");
+               }
+               return Ok("Match not found, Order added to Existing Orders");
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

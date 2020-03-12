@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,8 +16,12 @@ namespace ScottLogic.Internal.Training.Api.Controllers
     
     public class OrdersController : ControllerBase
     {
-        private readonly IOrderMatcher _matcher = new OrderMatcher();
-       
+        private IOrderMatcher _matcher;
+
+        public OrdersController(IOrderMatcher matcher)
+        {
+            _matcher = matcher;
+        }
 
        // GET api/orders
        [HttpGet]
@@ -25,15 +30,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             return Ok(_matcher.ExistingOrders);
         }
 
-        // POST api/values
-        [HttpPost]
-        public IActionResult Post([FromBody] Order currentOrder)
-        {
-            _matcher.ProcessOrder(currentOrder);
-            return Ok("processed");
-        }
-
-        // POST api/orders
+        // POST api/orders/buy
         [HttpPost]
         [Route("buy")]
         public IActionResult Buy([FromBody] Order currentOrder)
@@ -43,17 +40,17 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             return Ok("processed");
         }
 
-        // POST api/orders
+        // POST api/orders/sell
         [HttpPost]
         [Route("sell")]
         public IActionResult Sell([FromBody] Order currentOrder)
         {
-           var status = _matcher.ProcessOrder(currentOrder);
+            var status = _matcher.ProcessOrder(currentOrder);
            if (status)
            {
-               return Ok(_matcher.CurrentTrade);
+               return Ok("Match found, Trade created");
            }
-           return Ok(status);
+           return Ok("Match not found, Order added to Existing Orders");
         }
     }
 }

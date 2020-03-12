@@ -6,6 +6,7 @@ namespace ScottLogic.Internal.Training.Matcher
     public class OrderMatcher : IOrderMatcher
     {
         public Trade CurrentTrade { get; set; }
+        public List<Trade> ExistingTrades { get; set; } = new List<Trade>();
         public List<Order> ExistingOrders { get; set; } = new List<Order>();
 
         public bool ProcessOrder(Order currentOrder)
@@ -31,6 +32,10 @@ namespace ScottLogic.Internal.Training.Matcher
                 else
                 {
                     orderProcessed = TradeOrder(currentOrder, oppositeOrders);
+                    if (orderProcessed)
+                    {
+                        ExistingTrades.Add(CurrentTrade);
+                    }
                 }
             }
             return orderProcessed;

@@ -49,8 +49,6 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         }
     }
 
-    public class TradeOrder { }
-
     public class SellTrade
     {
         [Fact]
@@ -183,7 +181,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         }
     }
     
-    public class ReturnTrade
+    public class ReturnCurrentTrade
     {
         [Fact]
         public void EmptyMatcher_NullTrade()
@@ -288,6 +286,50 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var returnedTrade = currentMatcher.CurrentTrade;
             var currentTrade = new Trade(currentOrder2.AccountNumber, 55, currentOrder2.Price, currentOrder2.Action);
             Assert.Equal(currentTrade, returnedTrade);
+        }
+    }
+
+    public class ReturnExistingTrades
+    {
+        [Fact]
+        public void NoExistingTrades()
+        {
+            var currentMatcher = new OrderMatcher();
+            
+            Assert.Empty(currentMatcher.ExistingTrades);
+        }
+
+        [Fact]
+        public void OneExistingTrade()
+        {
+            var currentMatcher = new OrderMatcher();
+            var currentOrder1 = new Order(1001, 65, 55, OrderType.Sell, 14);
+            var currentOrder2 = new Order(1002, 55, 55, OrderType.Buy, 15);
+            currentMatcher.ProcessOrder(currentOrder1);
+            currentMatcher.ProcessOrder(currentOrder2);
+
+            var trades = new List<Trade>() { currentMatcher.CurrentTrade };
+
+            Assert.Equal(trades, currentMatcher.ExistingTrades);
+        }
+
+        [Fact]
+        public void TwoExistingTrades()
+        {
+            var currentMatcher = new OrderMatcher();
+            var currentOrder1 = new Order(1001, 65, 55, OrderType.Sell, 14);
+            var currentOrder2 = new Order(1002, 55, 55, OrderType.Buy, 15);
+            currentMatcher.ProcessOrder(currentOrder1);
+            currentMatcher.ProcessOrder(currentOrder2);
+
+
+
+            currentMatcher.ProcessOrder(currentOrder1);
+            currentMatcher.ProcessOrder(currentOrder2);
+
+            var trades = new List<Trade>() { currentMatcher.CurrentTrade };
+
+            Assert.Equal(trades, currentMatcher.ExistingTrades);
         }
     }
 }

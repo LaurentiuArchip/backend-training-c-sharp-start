@@ -59,6 +59,8 @@ namespace ScottLogic.Internal.Training.Api
 
             app.UseAuthorization();
 
+            app.UseAuthentication();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

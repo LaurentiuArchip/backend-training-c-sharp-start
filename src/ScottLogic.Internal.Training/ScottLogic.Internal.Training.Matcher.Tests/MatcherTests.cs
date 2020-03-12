@@ -318,16 +318,19 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         {
             var currentMatcher = new OrderMatcher();
             var currentOrder1 = new Order(1001, 65, 55, OrderType.Sell, 14);
-            var currentOrder2 = new Order(1002, 55, 55, OrderType.Buy, 15);
+            var currentOrder2 = new Order(1002, 65, 55, OrderType.Buy, 15);
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
 
+            var currentOrder3 = new Order(1001, 75, 55, OrderType.Sell, 16);
+            var currentOrder4 = new Order(1002, 75, 55, OrderType.Buy, 17);
 
+            currentMatcher.ProcessOrder(currentOrder3);
+            currentMatcher.ProcessOrder(currentOrder4);
 
-            currentMatcher.ProcessOrder(currentOrder1);
-            currentMatcher.ProcessOrder(currentOrder2);
-
-            var trades = new List<Trade>() { currentMatcher.CurrentTrade };
+            var currentTrade1 = new Trade(currentOrder2.AccountNumber, 65, currentOrder2.Price, currentOrder2.Action);
+            var currentTrade2 = new Trade(currentOrder4.AccountNumber, 75, currentOrder4.Price, currentOrder4.Action);
+            var trades = new List<Trade>() { currentTrade1, currentTrade2 };
 
             Assert.Equal(trades, currentMatcher.ExistingTrades);
         }

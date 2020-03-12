@@ -142,6 +142,7 @@ namespace ScottLogic.Internal.Training.Matcher
 
             // Create a Trade
             CurrentTrade = new Trade(currentOrder.AccountNumber, 0, currentOrder.Price, currentOrder.Action);
+            
             for (var i = 0; i < oppositeOrders.Count && currentOrder.Quantity > 0; i++)
             {
                 orderProcessed = true;

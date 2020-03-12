@@ -71,7 +71,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             UserModel user = null;
             // Validate the User Credentials
             // Demo
-            if (login.Username == "lau")
+            if (login.Username == "Lau")
             {
                 user = new UserModel {Username = "Lau", EmailAddress ="lau@g.com", DateOfJoing = new DateTime(2010, 08, 11)};
             }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileSystemGlobbing;
 using ScottLogic.Internal.Training.Matcher;
@@ -23,6 +24,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 
        // GET api/orders
        [HttpGet]
+       [Authorize]
         public IActionResult Get()
         {
             return Ok(_matcher.ExistingOrders);
@@ -30,6 +32,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 
         // POST api/orders/buy
         [HttpPost]
+        [Authorize]
         [Route("buy")]
         public IActionResult Buy([FromBody] Order currentOrder)
         {
@@ -50,6 +53,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 
         // POST api/orders/sell
         [HttpPost]
+        [Authorize]
         [Route("sell")]
         public IActionResult Sell([FromBody] Order currentOrder)
         {

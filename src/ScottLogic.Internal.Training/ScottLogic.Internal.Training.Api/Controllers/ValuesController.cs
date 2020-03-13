@@ -12,7 +12,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
     {
         // GET api/values
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public ActionResult<IEnumerable<string>> Get()
         {
             

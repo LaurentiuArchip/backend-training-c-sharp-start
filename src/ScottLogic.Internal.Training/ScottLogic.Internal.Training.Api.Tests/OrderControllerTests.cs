@@ -7,67 +7,54 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Moq;
 using Newtonsoft.Json;
 using Xunit;
+using ScottLogic.Internal.Training.Api.Controllers;
 
 namespace ScottLogic.Internal.Training.Api.Tests
 {
     public class OrderControllerTests
     {
         [Fact]
-        public async Task GetOrders_ReturnOKResult()
+        public void Get_ReturnOkStatus()
         {
-            var apiClient = new HttpClient();
-            var apiResponse =await apiClient.GetAsync("https://localhost:44342/api/orders");
+            var matcherMock = new Mock<IOrderMatcher>();
+            matcherMock.SetupGet(matcher => matcher.ExistingOrders).Returns(new List<Order>{});
+            var controller = new OrdersController(matcherMock.Object);
 
-            Assert.True(apiResponse.IsSuccessStatusCode);
+            var controllerResponse = controller.Get();
+            var objectResponse = controllerResponse as OkObjectResult;
+
+            Assert.Equal(200, objectResponse.StatusCode);
         }
 
         [Fact]
-        public async Task PostSellOrder_ReturnOKResult()
+        public void PostSell_ReturnsOkStatus()
         {
-            var apiClient = new HttpClient();
-            var currentOrder = new Order(1001, 65, 55, OrderType.Sell, 14);
-            var data = createHttpContent(currentOrder);
-            var apiResponse = await apiClient.PostAsync("https://localhost:44342/api/orders/sell", data);
+            var matcherMock = new Mock<IOrderMatcher>();
+            var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
+            matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
+            var controller = new OrdersController(matcherMock.Object);
 
-            Assert.True(apiResponse.IsSuccessStatusCode);
+            var controllerResponse = controller.Sell(currentOrder);
+            var objectResponse = controllerResponse as OkObjectResult;
+
+            Assert.Equal(200, objectResponse.StatusCode);
         }
 
         [Fact]
-        public async Task PostBuyOrder_ReturnOKResult()
+        public void PostBuy_ReturnsOkStatus()
         {
-            var apiClient = new HttpClient();
-            var currentOrder = new Order(1001, 65, 55, OrderType.Buy, 14);
-            var data = createHttpContent(currentOrder);
-            var apiResponse = await apiClient.PostAsync("https://localhost:44342/api/orders/buy", data);
+            var matcherMock = new Mock<IOrderMatcher>();
+            var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 14);
+            matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
+            var controller = new OrdersController(matcherMock.Object);
 
-            Assert.True(apiResponse.IsSuccessStatusCode);
-        }
+            var controllerResponse = controller.Sell(currentOrder);
+            var objectResponse = controllerResponse as OkObjectResult;
 
-        private static HttpContent createHttpContent(Order order)
-        {
-            HttpContent httpContent = null;
-            if (order != null)
-            {
-                var ms = new MemoryStream();
-                SerializeJsonIntoStream(order, ms);
-                ms.Seek(0, SeekOrigin.Begin);
-                httpContent = new StreamContent(ms);
-                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            }
-            return httpContent;
-        }
-
-        public static void SerializeJsonIntoStream(object value, Stream stream)
-        {
-            using (var sw = new StreamWriter(stream, new UTF8Encoding(false), 1024, true))
-            using (var jtw = new JsonTextWriter(sw) { Formatting = Formatting.None })
-            {
-                var js = new JsonSerializer();
-                js.Serialize(jtw, value);
-                jtw.Flush();
-            }
+            Assert.Equal(200, objectResponse.StatusCode);
         }
     }
 }

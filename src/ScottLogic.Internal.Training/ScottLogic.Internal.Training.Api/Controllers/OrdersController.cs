@@ -12,8 +12,6 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
-    
     public class OrdersController : ControllerBase
     {
         private IOrderMatcher _matcher;
@@ -35,7 +33,6 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [Route("buy")]
         public IActionResult Buy([FromBody] Order currentOrder)
         {
-            //Order currentOrder1 = JsonSerializer.Deserialize<Order>(currentOrder);
             _matcher.ProcessOrder(currentOrder);
             return Ok("processed");
         }

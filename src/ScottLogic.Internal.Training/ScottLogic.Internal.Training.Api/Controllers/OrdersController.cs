@@ -33,8 +33,12 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [Route("buy")]
         public IActionResult Buy([FromBody] Order currentOrder)
         {
-            _matcher.ProcessOrder(currentOrder);
-            return Ok("processed");
+            var status = _matcher.ProcessOrder(currentOrder);
+            if (status)
+            {
+                return Ok("Match found, Trade created");
+            }
+            return Ok("Match not found, Order added to Existing Orders");
         }
 
         // POST api/orders/sell

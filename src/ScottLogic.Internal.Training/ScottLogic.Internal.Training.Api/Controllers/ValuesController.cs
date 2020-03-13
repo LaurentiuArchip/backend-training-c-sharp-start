@@ -12,10 +12,11 @@ namespace ScottLogic.Internal.Training.Api.Controllers
     {
         // GET api/values
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2", "value3", "value4", "value5" };
+            
+            return new[] { "value1", "value2", "value3", "value4", "value5" };
 
             var currentUser = HttpContext.User;
             int spendingTimeWithCompany = 0;

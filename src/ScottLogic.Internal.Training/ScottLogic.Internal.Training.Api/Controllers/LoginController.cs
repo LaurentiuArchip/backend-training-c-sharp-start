@@ -25,8 +25,6 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         {
             _config = config;
         }
-        
-        
 
         // POST: api/Login
         [AllowAnonymous]

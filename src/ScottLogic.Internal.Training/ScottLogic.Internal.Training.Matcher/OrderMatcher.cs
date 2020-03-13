@@ -3,9 +3,10 @@ using System.Linq;
 
 namespace ScottLogic.Internal.Training.Matcher
 {
-    public class OrderMatcher
+    public class OrderMatcher : IOrderMatcher
     {
         public Trade CurrentTrade { get; set; }
+        public List<Trade> ExistingTrades { get; set; } = new List<Trade>();
         public List<Order> ExistingOrders { get; set; } = new List<Order>();
 
         public bool ProcessOrder(Order currentOrder)
@@ -31,6 +32,10 @@ namespace ScottLogic.Internal.Training.Matcher
                 else
                 {
                     orderProcessed = TradeOrder(currentOrder, oppositeOrders);
+                    if (orderProcessed)
+                    {
+                        ExistingTrades.Add(CurrentTrade);
+                    }
                 }
             }
             return orderProcessed;
@@ -137,6 +142,7 @@ namespace ScottLogic.Internal.Training.Matcher
 
             // Create a Trade
             CurrentTrade = new Trade(currentOrder.AccountNumber, 0, currentOrder.Price, currentOrder.Action);
+            
             for (var i = 0; i < oppositeOrders.Count && currentOrder.Quantity > 0; i++)
             {
                 orderProcessed = true;

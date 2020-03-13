@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace ScottLogic.Internal.Training.Matcher
 {
@@ -10,13 +11,13 @@ namespace ScottLogic.Internal.Training.Matcher
     }
     public class Order : IEquatable<Order>
     {
-        public int AccountNumber { get; }
+        public int AccountNumber { get; set; }
         public int Quantity { get; set; }
-        public int Price { get; }
-        public OrderType Action { get; }
-        public int TimeRank {get; }
+        public int Price { get; set; }
+        public OrderType Action { get; set; }
+        public int TimeRank {get; set; }
 
-        
+        public Order() { }
         public Order(int accountNumber, int quantity, int price, OrderType action, int timeRank)
         {
             AccountNumber = accountNumber;

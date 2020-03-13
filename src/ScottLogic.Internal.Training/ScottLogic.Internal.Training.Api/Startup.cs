@@ -1,4 +1,5 @@
 ﻿using System.Text;
+﻿using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using ScottLogic.Internal.Training.Matcher;
 
 namespace ScottLogic.Internal.Training.Api
 {
@@ -42,7 +44,13 @@ namespace ScottLogic.Internal.Training.Api
                     .RequireAuthenticatedUser()
                     .Build());
             });
+            services.AddSingleton<IOrderMatcher, OrderMatcher>();
             services.AddControllers();
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

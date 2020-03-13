@@ -79,7 +79,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
             Assert.Equal(200, objectResponse.StatusCode);
             Assert.Equal("Match not found, Order added to Existing Orders", objectResponse.Value);
         }
-
+        
         [Fact]
         public void PostBuy_ReturnsOkStatus_Trade()
         {
@@ -88,7 +88,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
             matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
             var controller = new OrdersController(matcherMock.Object);
 
-            var controllerResponse = controller.Sell(currentOrder);
+            var controllerResponse = controller.Buy(currentOrder);
             var objectResponse = controllerResponse as OkObjectResult;
 
             Assert.Equal(200, objectResponse.StatusCode);
@@ -103,11 +103,37 @@ namespace ScottLogic.Internal.Training.Api.Tests
             matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(false);
             var controller = new OrdersController(matcherMock.Object);
 
-            var controllerResponse = controller.Sell(currentOrder);
+            var controllerResponse = controller.Buy(currentOrder);
             var objectResponse = controllerResponse as OkObjectResult;
 
             Assert.Equal(200, objectResponse.StatusCode);
             Assert.Equal("Match not found, Order added to Existing Orders", objectResponse.Value);
+        }
+
+        [Fact]
+        public void PostBuy_InsteadOfSell_ReturnsBadRequest()
+        {
+            var matcherMock = new Mock<IOrderMatcher>();
+            var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 14);
+            var controller = new OrdersController(matcherMock.Object);
+
+            var controllerResponse = controller.Sell(currentOrder);
+            var objectResponse = controllerResponse as BadRequestResult;
+
+            Assert.Equal(400, objectResponse.StatusCode);
+        }
+
+        [Fact]
+        public void PostSell_InsteadOfBuy_ReturnsBadRequest()
+        {
+            var matcherMock = new Mock<IOrderMatcher>();
+            var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
+            var controller = new OrdersController(matcherMock.Object);
+
+            var controllerResponse = controller.Buy(currentOrder);
+            var objectResponse = controllerResponse as BadRequestResult;
+
+            Assert.Equal(400, objectResponse.StatusCode);
         }
     }
 }

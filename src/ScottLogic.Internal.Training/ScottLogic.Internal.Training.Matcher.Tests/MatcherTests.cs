@@ -308,7 +308,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
 
-            var trades = new List<Trade>() { currentMatcher.CurrentTrade };
+            var trades = new List<Trade>{ currentMatcher.CurrentTrade };
 
             Assert.Equal(trades, currentMatcher.ExistingTrades);
         }

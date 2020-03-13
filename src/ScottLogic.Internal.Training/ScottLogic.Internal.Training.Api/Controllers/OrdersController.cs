@@ -12,8 +12,6 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
-    
     public class OrdersController : ControllerBase
     {
         private IOrderMatcher _matcher;

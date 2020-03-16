@@ -12,10 +12,13 @@ namespace ScottLogic.Internal.Training.Matcher
     }
     public class Order : IEquatable<Order>
     {
+        [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Please enter positive integer Number")]
         public int AccountNumber { get; set; }
+        [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Please enter positive integer Number")]
         public int Quantity { get; set; }
+        [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Please enter positive integer Number")]
         public int Price { get; set; }
         [Required]

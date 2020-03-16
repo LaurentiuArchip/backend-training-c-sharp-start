@@ -1,12 +1,12 @@
 ﻿using System.Text;
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using ScottLogic.Internal.Training.Matcher;
 
@@ -44,6 +44,8 @@ namespace ScottLogic.Internal.Training.Api
                     .RequireAuthenticatedUser()
                     .Build());
             });
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+
             services.AddSingleton<IOrderMatcher, OrderMatcher>();
             services.AddControllers();
             services.AddMvc().AddJsonOptions(options =>
@@ -54,12 +56,15 @@ namespace ScottLogic.Internal.Training.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseAuthentication();
+            app.UseMvc();
 
             app.UseHttpsRedirection();
 

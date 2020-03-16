@@ -11,7 +11,7 @@ using ScottLogic.Internal.Training.Matcher;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
     {

@@ -64,7 +64,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private UserModel AuthenticateUser(UserModel login)
+        private static UserModel AuthenticateUser(UserModel login)
         {
             UserModel user = null;
             // Validate the User Credentials

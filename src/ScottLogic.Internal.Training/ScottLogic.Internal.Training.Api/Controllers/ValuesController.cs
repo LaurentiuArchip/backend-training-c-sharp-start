@@ -15,7 +15,8 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [Authorize]
         public ActionResult<IEnumerable<string>> Get()
         {
-            
+
+            Console.Write("Hello");
             return new[] { "value1", "value2", "value3", "value4", "value5" };
 
             var currentUser = HttpContext.User;

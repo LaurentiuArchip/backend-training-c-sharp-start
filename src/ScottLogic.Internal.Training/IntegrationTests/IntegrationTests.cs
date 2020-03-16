@@ -32,5 +32,57 @@ namespace IntegrationTests
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
         }
+
+        [Fact]
+        public async Task PostSellOrder()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var request = new
+            {
+                Url = "api/orders/sell",
+                Body = new
+                {
+                    AccountNumber = 1001,
+                    Quantity = 50,
+                    Price = 60,
+                    Action = OrderType.Sell,
+                    TimeRank = 17
+                }
+            };
+
+            // Act
+            var response = await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+            var value = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task PostBuyOrder()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var request = new
+            {
+                Url = "api/orders/buy",
+                Body = new
+                {
+                    AccountNumber = 1001,
+                    Quantity = 50,
+                    Price = 60,
+                    Action = OrderType.Buy,
+                    TimeRank = 17
+                }
+            };
+
+            // Act
+            var response = await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+            var value = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

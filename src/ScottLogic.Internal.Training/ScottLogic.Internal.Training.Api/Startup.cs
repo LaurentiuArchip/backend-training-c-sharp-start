@@ -73,8 +73,6 @@ namespace ScottLogic.Internal.Training.Api
             {
                 endpoints.MapControllers();
             });
-
-            app.UseMvc();
         }
     }
 }

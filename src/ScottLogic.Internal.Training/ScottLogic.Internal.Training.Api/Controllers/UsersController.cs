@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,10 +53,25 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             }
         }
         
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE: api/ApiWithActions/user
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromBody] User user)
         {
+            // Get existing users
+            var users = await _context.Users.ToArrayAsync();
+            if (user.Username != null)
+            {
+                if (users.Any(currentUser => currentUser.Username == user.Username))
+                {
+                    _context.Remove(user);
+                    _context.SaveChanges();
+                    return Ok("User removed from the database");
+                }
+
+                return NotFound("User not found in database");
+            }
+            // Invalid request
+            return BadRequest();
         }
     }
 }

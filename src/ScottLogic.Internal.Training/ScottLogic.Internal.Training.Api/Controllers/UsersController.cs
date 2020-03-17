@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
@@ -11,16 +12,31 @@ namespace ScottLogic.Internal.Training.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly ApiContext _context;
+
+        public UsersController(ApiContext context)
+        {
+            _context = context;
+        }
+        
         // POST: api/Users
         [HttpPost]
-        public IActionResult Post([FromBody] UserModel user)
+        public async Task<IActionResult> Post([FromBody] User user)
         {
             if (user.Username != null)
             {
+                // Get existing users
+                var users = await _context.Users
+                    .Include(u => u.Username)
+                    .ToArrayAsync();
                 // User already exists
 
                 // New user, added to the database
-                return Ok();
+                _context.Add(user);
+                users = await _context.Users
+                    .Include(u => u.Username)
+                    .ToArrayAsync();
+                return Ok(users);
             }
             else
             {

@@ -136,4 +136,37 @@ namespace ScottLogic.Internal.Training.Api.Tests
             Assert.Equal(400, objectResponse.StatusCode);
         }
     }
+
+    public class UserControllerTests
+    {
+        [Fact]
+        public void PostUser_ReturnsOkStatus()
+        {
+            var matcherMock = new Mock<IOrderMatcher>();
+            var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
+            matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
+            var controller = new OrdersController(matcherMock.Object);
+
+            var controllerResponse = controller.Sell(currentOrder);
+            var objectResponse = controllerResponse as OkObjectResult;
+
+            Assert.Equal(200, objectResponse.StatusCode);
+            Assert.Equal("Match found, Trade created", objectResponse.Value);
+        }
+
+        [Fact]
+        public void PostUser_ReturnsUserAlreadyExists()
+        {
+            var matcherMock = new Mock<IOrderMatcher>();
+            var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
+            matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
+            var controller = new OrdersController(matcherMock.Object);
+
+            var controllerResponse = controller.Sell(currentOrder);
+            var objectResponse = controllerResponse as OkObjectResult;
+
+            Assert.Equal(200, objectResponse.StatusCode);
+            Assert.Equal("Match found, Trade created", objectResponse.Value);
+        }
+    }
 }

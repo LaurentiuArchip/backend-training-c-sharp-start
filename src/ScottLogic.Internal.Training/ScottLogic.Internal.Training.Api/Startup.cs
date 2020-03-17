@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using ScottLogic.Internal.Training.Matcher;
+using Microsoft.EntityFrameworkCore;
 
 namespace ScottLogic.Internal.Training.Api
 {
@@ -45,7 +46,8 @@ namespace ScottLogic.Internal.Training.Api
                     .Build());
             });
             services.AddMvc(options => options.EnableEndpointRouting = false);
-
+            services.AddDbContext<ApiContext>(options => options.UseInMemoryDatabase("UsersDb"));
+            services.AddScoped<ApiContext>();
             services.AddSingleton<IOrderMatcher, OrderMatcher>();
             services.AddControllers();
             services.AddMvc().AddJsonOptions(options =>

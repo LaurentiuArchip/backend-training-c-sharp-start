@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using ScottLogic.Internal.Training.Api;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
@@ -17,12 +12,13 @@ namespace ScottLogic.Internal.Training.Api.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
 
         public LoginController(IConfiguration config)
         {
             _config = config;
         }
+
         [AllowAnonymous]
         [HttpPost]
         public IActionResult Login([FromBody]UserModel login)
@@ -32,15 +28,14 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 
             if (user != null)
             {
-                var tokenString = GenerateJSONWebToken(user);
-                System.Diagnostics.Debug.WriteLine("sending token", tokenString);
+                var tokenString = GenerateJsonWebToken(user);
                 response = Ok(new { token = tokenString });
             }
 
             return response;
         }
 
-        private string GenerateJSONWebToken(UserModel userInfo)
+        private string GenerateJsonWebToken(UserModel userInfo)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

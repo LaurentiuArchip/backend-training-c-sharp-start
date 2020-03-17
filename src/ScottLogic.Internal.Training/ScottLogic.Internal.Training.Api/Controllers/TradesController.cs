@@ -11,9 +11,10 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TradesController : ControllerBase
     {
-        private IOrderMatcher _matcher;
+        private readonly IOrderMatcher _matcher;
 
         public TradesController(IOrderMatcher matcher)
         {
@@ -22,7 +23,6 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 
         // GET: api/Trades
         [HttpGet]
-        [Authorize]
         public IActionResult Get()
         {
             return Ok(_matcher.ExistingTrades);

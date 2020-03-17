@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,9 +21,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         public async Task<IActionResult> Get()
         {
             return Ok(_context.Users);
-
         }
-
 
         // POST: api/Users
         [HttpPost]
@@ -35,23 +30,25 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             if (user.Username != null)
             {
                 // Get existing users
-                var users = await _context.Users
-                    //.Include(u => u.Username)
-                    .ToArrayAsync();
-                // User already exists
-
-                // New user, added to the database
-                _context.Add(user);
-                _context.SaveChanges();
-                users = await _context.Users
-                    //.Include(u => u.Username)
-                    .ToArrayAsync();
-                return Ok(users);
+                var users = await _context.Users.ToArrayAsync();
+                if (users.Any(currentUser => currentUser.Username == user.Username))
+                {
+                    // User already exists
+                    return Ok("User already present in the database");
+                }
+                else
+                {
+                    // New user, added to the database
+                    _context.Add(user);
+                    _context.SaveChanges();
+                    users = await _context.Users.ToArrayAsync();
+                    return Ok("User added to the database");
+                }
             }
             else
             {
                 // Wrong user data
-                return BadRequest();
+                return BadRequest("Invalid user data!");
             }
         }
         

@@ -9,7 +9,7 @@ namespace ScottLogic.Internal.Training.Api
     public class User
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
         public string Username { get; set; }
     }
 }

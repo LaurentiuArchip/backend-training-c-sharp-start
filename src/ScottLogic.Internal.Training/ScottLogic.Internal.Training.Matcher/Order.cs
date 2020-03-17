@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace ScottLogic.Internal.Training.Matcher
@@ -11,9 +12,16 @@ namespace ScottLogic.Internal.Training.Matcher
     }
     public class Order : IEquatable<Order>
     {
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter positive integer Number")]
         public int AccountNumber { get; set; }
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter positive integer Number")]
         public int Quantity { get; set; }
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter positive integer Number")]
         public int Price { get; set; }
+        [Required]
         public OrderType Action { get; set; }
         public int TimeRank {get; set; }
 

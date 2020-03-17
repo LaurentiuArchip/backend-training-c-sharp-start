@@ -335,4 +335,14 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             Assert.Equal(trades, currentMatcher.ExistingTrades);
         }
     }
+
+    public class OrderValidation
+    {
+        [Fact]
+        public void NegativeAccountNumber_Error()
+        {
+            var currentOrder = new Order(-1000, 65, 55, OrderType.Sell, 14);
+            Assert.IsType<Order>(currentOrder);
+        }
+    }
 }

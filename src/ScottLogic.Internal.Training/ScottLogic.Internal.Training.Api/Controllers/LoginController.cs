@@ -13,7 +13,7 @@ using ScottLogic.Internal.Training.Api;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
@@ -33,6 +33,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             if (user != null)
             {
                 var tokenString = GenerateJSONWebToken(user);
+                System.Diagnostics.Debug.WriteLine("sending token", tokenString);
                 response = Ok(new { token = tokenString });
             }
 

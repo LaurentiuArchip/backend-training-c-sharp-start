@@ -19,6 +19,15 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             _context = context;
         }
         
+        //Get ------Just for Testing
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            return Ok(_context.Users);
+
+        }
+
+
         // POST: api/Users
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] User user)
@@ -27,14 +36,15 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             {
                 // Get existing users
                 var users = await _context.Users
-                    .Include(u => u.Username)
+                    //.Include(u => u.Username)
                     .ToArrayAsync();
                 // User already exists
 
                 // New user, added to the database
                 _context.Add(user);
+                _context.SaveChanges();
                 users = await _context.Users
-                    .Include(u => u.Username)
+                    //.Include(u => u.Username)
                     .ToArrayAsync();
                 return Ok(users);
             }

@@ -10,8 +10,16 @@ namespace ScottLogic.Internal.Training.Api
     {
         public ApiContext(DbContextOptions<ApiContext> options) : base(options)
         {
+            LoadUsers();
         }
 
         public DbSet<User> Users { get; set; }
+
+        public void LoadUsers()
+        {
+            var user = new User() {Username = "Paul"};
+            Users.Add(user);
+            SaveChanges();
+        }
     }
 }

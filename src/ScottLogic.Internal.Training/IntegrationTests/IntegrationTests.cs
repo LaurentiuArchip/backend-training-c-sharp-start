@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Net.Http.Headers;
@@ -5,6 +6,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using ScottLogic.Internal.Training.Matcher;
 using Xunit;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IntegrationTests
 {
@@ -58,11 +61,13 @@ namespace IntegrationTests
 
             // Act
             var response = await client.GetAsync(url);
+            var contentString = await response.Content.ReadAsStringAsync();
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
+            Assert.Equal("[]", contentString);
         }
 
         [Fact]
@@ -96,6 +101,8 @@ namespace IntegrationTests
         public async Task PostSellOrder_Authorized_()
         {
             // Arrange
+
+                // Set up the Http client and the authorization
             var client = _factory.CreateClient();
             var requestLogin = new
             {
@@ -113,25 +120,32 @@ namespace IntegrationTests
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
             
+                // Post orders
+            var currentOrder1 = new Order(1001, 50, 60, OrderType.Sell, 17);
             var request = new
             {
                 Url = "api/orders/sell",
-                Body = new
-                {
-                    AccountNumber = 1001,
-                    Quantity = 50,
-                    Price = 60,
-                    Action = OrderType.Sell,
-                    TimeRank = 17
-                }
+                Body = currentOrder1
             };
+            await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+
+            var currentOrder2 = new Order(1001, 50, 60, OrderType.Sell, 18);
+            request = new
+            {
+                Url = "api/orders/sell",
+                Body = currentOrder2
+            };
+            await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+            var expectedOrders = new List<Order>() {currentOrder1, currentOrder2};
 
             // Act
-            var response = await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
-            var value = await response.Content.ReadAsStringAsync();
+            var responseGetOrders =await client.GetAsync("/api/orders");
+            var existingOrdersString = await responseGetOrders.Content.ReadAsStringAsync();
+            var existingOrders = JsonConvert.DeserializeObject<IList<Order>>(existingOrdersString);
 
             // Assert
-            response.EnsureSuccessStatusCode();
+            responseGetOrders.EnsureSuccessStatusCode();
+            Assert.Equal(expectedOrders, existingOrders);
         }
 
         [Fact]

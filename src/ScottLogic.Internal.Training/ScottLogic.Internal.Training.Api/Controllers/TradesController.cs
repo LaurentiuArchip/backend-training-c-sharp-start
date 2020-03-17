@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ScottLogic.Internal.Training.Matcher;
@@ -10,9 +11,10 @@ namespace ScottLogic.Internal.Training.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TradesController : ControllerBase
     {
-        private IOrderMatcher _matcher;
+        private readonly IOrderMatcher _matcher;
 
         public TradesController(IOrderMatcher matcher)
         {

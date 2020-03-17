@@ -59,15 +59,18 @@ namespace IntegrationTests
             
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
 
+            var expectedOrders = new List<Order>();
+
             // Act
             var response = await client.GetAsync(url);
             var contentString = await response.Content.ReadAsStringAsync();
+            var existingOrders = JsonConvert.DeserializeObject<IList<Order>>(contentString);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
-            Assert.Equal("[]", contentString);
+            Assert.Equal(expectedOrders, existingOrders);
         }
 
         [Fact]
@@ -98,7 +101,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public async Task PostSellOrder_Authorized_()
+        public async Task PostOrders_Authorized()
         {
             // Arrange
 
@@ -136,6 +139,23 @@ namespace IntegrationTests
                 Body = currentOrder2
             };
             await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+
+            var currentOrder3 = new Order(1001, 50, 60, OrderType.Sell, 1);
+            request = new
+            {
+                Url = "api/orders/sell",
+                Body = currentOrder3
+            };
+            await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+
+            var currentOrder4 = new Order(1003, 50, 60, OrderType.Buy, 19);
+            request = new
+            {
+                Url = "api/orders/buy",
+                Body = currentOrder4
+            };
+            await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+
             var expectedOrders = new List<Order>() {currentOrder1, currentOrder2};
 
             // Act
@@ -174,47 +194,5 @@ namespace IntegrationTests
             // Assert
             Assert.Equal(expected, response.StatusCode);
         }
-
-        [Fact]
-        public async Task PostBuyOrder_Authorized_()
-        {
-            // Arrange
-            var client = _factory.CreateClient();
-            var requestLogin = new
-            {
-                Url = "api/login",
-                Body = new
-                {
-                    Username = "Lau"
-                }
-            };
-            var responseLogin = await client.PostAsync(requestLogin.Url, ContentHelper.GetStringContent(requestLogin.Body));
-            var currentTokenString = await responseLogin.Content.ReadAsStringAsync();
-            var currentTokenJson = JObject.Parse(currentTokenString);
-            string tokenKey = "token";
-            var currentToken = currentTokenJson.GetValue(tokenKey).ToString();
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
-            
-            var request = new
-            {
-                Url = "api/orders/buy",
-                Body = new
-                {
-                    AccountNumber = 1001,
-                    Quantity = 50,
-                    Price = 60,
-                    Action = OrderType.Buy,
-                    TimeRank = 17
-                }
-            };
-
-            // Act
-            var response = await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
-            var value = await response.Content.ReadAsStringAsync();
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-        }
-     }
+    }
 }

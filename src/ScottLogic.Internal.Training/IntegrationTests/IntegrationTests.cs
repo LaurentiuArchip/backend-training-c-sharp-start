@@ -157,15 +157,24 @@ namespace IntegrationTests
             await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
 
             var expectedOrders = new List<Order>() {currentOrder1, currentOrder2};
+            var currentTrade = new Trade(currentOrder4.AccountNumber, currentOrder4.Quantity, currentOrder4.Price, currentOrder4.Action);
+            var expectedTrade = new List<Trade>() { currentTrade };
 
             // Act
+            // Get Existing Orders
             var responseGetOrders =await client.GetAsync("/api/orders");
             var existingOrdersString = await responseGetOrders.Content.ReadAsStringAsync();
             var existingOrders = JsonConvert.DeserializeObject<IList<Order>>(existingOrdersString);
 
+            // Get Trade
+            var responseGetTrades = await client.GetAsync("/api/trades");
+            var existingTradesString = await responseGetTrades.Content.ReadAsStringAsync();
+            var existingTrades = JsonConvert.DeserializeObject<IList<Trade>>(existingTradesString);
+
             // Assert
             responseGetOrders.EnsureSuccessStatusCode();
             Assert.Equal(expectedOrders, existingOrders);
+            Assert.Equal(expectedTrade, existingTrades);
         }
 
         [Fact]

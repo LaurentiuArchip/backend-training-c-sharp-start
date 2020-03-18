@@ -56,17 +56,16 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         private User AuthenticateUser(User login)
         {
             User user = null;
-
+            
             //Validate the User Credentials  
-            //Demo Purpose, I have Passed HardCoded User Information
-
-            // Get the existing users from the database
-            var users = _context.Users.ToArrayAsync();
-            System.Diagnostics.Debug.WriteLine("existing users in login controller", users);
-            if ("Lau" == login.Username)
+                // Get the existing users from the database
+            var existingUser = _context.Users.Where(u=> u.Username == login.Username).ToArray();
+                // Check the password
+            if (existingUser.Count() == 1 && existingUser[0].Password == login.Password)
             {
                 user = new User { Username = login.Username,
-                                Password = "password"};
+                                Password = login.Password
+                };
             }
             return user;
         }

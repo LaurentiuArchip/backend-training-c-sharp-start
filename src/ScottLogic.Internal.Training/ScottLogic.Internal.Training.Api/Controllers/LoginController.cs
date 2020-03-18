@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -13,10 +15,12 @@ namespace ScottLogic.Internal.Training.Api.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly ApiContext _context;
 
-        public LoginController(IConfiguration config)
+        public LoginController(IConfiguration config, ApiContext context)
         {
             _config = config;
+            _context = context;
         }
 
         [AllowAnonymous]
@@ -54,10 +58,15 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             User user = null;
 
             //Validate the User Credentials  
-            //Demo Purpose, I have Passed HardCoded User Information  
-            if (login.Username == "Lau")
+            //Demo Purpose, I have Passed HardCoded User Information
+
+            // Get the existing users from the database
+            var users = _context.Users.ToArrayAsync();
+            System.Diagnostics.Debug.WriteLine("existing users in login controller", users);
+            if ("Lau" == login.Username)
             {
-                user = new User { Username = "Lau" };
+                user = new User { Username = login.Username,
+                                Password = "password"};
             }
             return user;
         }

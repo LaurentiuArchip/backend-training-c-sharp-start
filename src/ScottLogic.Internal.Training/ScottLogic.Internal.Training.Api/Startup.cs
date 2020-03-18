@@ -60,6 +60,14 @@ namespace ScottLogic.Internal.Training.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Get existing data from database
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<ApiContext>();
+               AddTestData(context);
+            }
+
+            // Other configurations
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -80,6 +88,18 @@ namespace ScottLogic.Internal.Training.Api
             {
                 endpoints.MapControllers();
             });
+        }
+
+        // Add some data to the database, for testing purposes
+        private static void AddTestData(ApiContext context)
+        {
+            var testUser1 = new User
+            {
+                Username = "Luke",
+                Password = "password2"
+            };
+            context.Users.Add(testUser1);
+            context.SaveChanges();
         }
     }
 }

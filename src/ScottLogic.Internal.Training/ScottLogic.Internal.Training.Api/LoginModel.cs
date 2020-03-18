@@ -8,6 +8,7 @@ namespace ScottLogic.Internal.Training.Api
 {
     public class User
     {
+        // Data Fields for User
         [Key]
         public int Id { get; set; }
         public string Username { get; set; }

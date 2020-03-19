@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Net.Http.Headers;
@@ -48,7 +47,8 @@ namespace IntegrationTests
                 Url = "api/login",
                 Body = new
                 {
-                    Username = "Lau"
+                    Username = "Luke",
+                    Password = "password2"
                 }
             };
             var responseLogin = await client.PostAsync(requestLogin.Url, ContentHelper.GetStringContent(requestLogin.Body));
@@ -112,7 +112,8 @@ namespace IntegrationTests
                 Url = "api/login",
                 Body = new
                 {
-                    Username = "Lau"
+                    Username = "Luke",
+                    Password = "password2"
                 }
             };
             var responseLogin = await client.PostAsync(requestLogin.Url, ContentHelper.GetStringContent(requestLogin.Body));
@@ -173,8 +174,8 @@ namespace IntegrationTests
 
             // Assert
             responseGetOrders.EnsureSuccessStatusCode();
+            Assert.Equal(expectedTrade[0], existingTrades[0]);
             Assert.Equal(expectedOrders, existingOrders);
-            Assert.Equal(expectedTrade, existingTrades);
         }
 
         [Fact]

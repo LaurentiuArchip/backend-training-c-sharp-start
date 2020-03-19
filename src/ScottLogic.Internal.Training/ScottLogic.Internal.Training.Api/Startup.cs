@@ -55,6 +55,7 @@ namespace ScottLogic.Internal.Training.Api
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.IgnoreNullValues = true;
             });
+            services.AddSwaggerDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,6 +84,9 @@ namespace ScottLogic.Internal.Training.Api
             app.UseAuthorization();
 
             app.UseAuthentication();
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>
             {

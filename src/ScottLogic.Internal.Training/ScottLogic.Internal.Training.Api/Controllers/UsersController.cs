@@ -62,13 +62,12 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] User user)
         {
-            // Get existing users
             var users = await _context.Users.ToArrayAsync();
             if (user.Username != null)
             {
                 if (users.Any(currentUser => currentUser.Username == user.Username))
                 {
-                    _context.Remove(user);
+                    _context.Users.Remove(_context.Users.FirstOrDefault(u => u.Username == user.Username));
                     _context.SaveChanges();
                     return Ok("User removed from the database");
                 }

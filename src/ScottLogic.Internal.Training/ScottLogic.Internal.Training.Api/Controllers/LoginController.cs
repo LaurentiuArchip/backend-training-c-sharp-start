@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -60,13 +61,27 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 // Get the existing users from the database
             var existingUser = _context.Users.Where(u=> u.Username == login.Username).ToArray();
                 // Check the password
-            if (existingUser.Count() == 1 && existingUser[0].Password == login.Password)
+            if (existingUser.Count() == 1 && CheckEncryptedPassword(existingUser[0], login.Password))
             {
                 user = new User { Username = login.Username,
                                 Password = login.Password
                 };
             }
             return user;
+        }
+
+        private bool CheckEncryptedPassword(User user, string password)
+        {
+            byte[] salt = Convert.FromBase64String(user.Salt);
+            const int HASH_SIZE = 32;
+            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt);
+            var hashValue = pbkdf2.GetBytes(HASH_SIZE);
+            var hashValueString = Convert.ToBase64String(hashValue);
+            if(hashValueString == user.Password)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

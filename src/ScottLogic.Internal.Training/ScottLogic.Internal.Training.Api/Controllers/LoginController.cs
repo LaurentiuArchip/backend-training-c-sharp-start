@@ -77,11 +77,8 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt);
             var hashValue = pbkdf2.GetBytes(HASH_SIZE);
             var hashValueString = Convert.ToBase64String(hashValue);
-            if(hashValueString == user.Password)
-            {
-                return true;
-            }
-            return false;
+            
+            return (hashValueString == user.Password);
         }
     }
 }

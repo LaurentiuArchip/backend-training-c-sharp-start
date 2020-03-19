@@ -37,7 +37,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 if (users.Any(currentUser => currentUser.Username == user.Username))
                 {
                     // User already exists
-                    return Ok("User already present in the database");
+                    return Conflict("User already present in the database");
                 }
                 else
                 {

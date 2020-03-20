@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ScottLogic.Internal.Training.Api</name>
+    </assembly>
+    <members>
+        <member name="T:ScottLogic.Internal.Training.Api.Controllers.TradesController">
+            <summary>
+            Contains all endpoints to access Trades
+            </summary>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.TradesController.#ctor(ScottLogic.Internal.Training.Matcher.IOrderMatcher)">
+            <summary>
+            The class constructor
+            </summary>
+            <param name="matcher"> Instance of OrderMatcher</param>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.TradesController.Get">
+            <summary>
+            Get the existing trades
+            </summary>
+            <returns>a List with the existing trades</returns>
+            <example>GET api/trades</example>
+        </member>
+    </members>
+</doc>

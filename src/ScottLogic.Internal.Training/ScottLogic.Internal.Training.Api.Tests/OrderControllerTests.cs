@@ -54,7 +54,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
                 var currentOrder3 = new Order(1003, 45, 55, OrderType.Sell, 16);
 
                 var existingOrders = new List<Order> { currentOrder1, currentOrder2, currentOrder3 };
-                matcherMock.SetupGet(matcher => matcher.ExistingOrders).Returns(existingOrders);
+                matcherMock.Setup(matcher => matcher.ExistingOrders).Returns(existingOrders);
 
                 var controller = new OrdersController(matcherMock.Object);
                 int userAccountNumber = 1004;
@@ -71,7 +71,24 @@ namespace ScottLogic.Internal.Training.Api.Tests
             [Fact]
             public void Get_PrivateOrdersBook_UserID_Authorized_ReturnExistingPrivateOrders()
             {
+                var matcherMock = new Mock<IOrderMatcher>();
+                var currentOrder1 = new Order(1001, 45, 55, OrderType.Sell, 14);
+                var currentOrder2 = new Order(1002, 45, 55, OrderType.Sell, 15);
+                var currentOrder3 = new Order(1003, 45, 55, OrderType.Sell, 16);
 
+                var existingOrders = new List<Order> { currentOrder1, currentOrder2, currentOrder3 };
+                matcherMock.Setup(matcher => matcher.ExistingOrders).Returns(existingOrders);
+
+                var controller = new OrdersController(matcherMock.Object);
+                int userAccountNumber = 1001;
+
+                var controllerResponse = controller.Get(userAccountNumber);
+                var objectResponse = controllerResponse as OkObjectResult;
+
+                var expectedOrders = new List<Order> { currentOrder1 };
+
+                Assert.Equal(200, objectResponse.StatusCode);
+                Assert.Equal(expectedOrders, objectResponse.Value);
             }
 
             [Fact]

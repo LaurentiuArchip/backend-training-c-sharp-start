@@ -47,11 +47,11 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// <returns>a List with the existing ordres for a specific account number.</returns>
         /// <example>GET api/orders/{1004}</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public object Get(int userAccountNumber)
+        public IActionResult Get(int userAccountNumber)
         {
             var privateOrdersBook = _matcher.ExistingOrders.Where(order => order.AccountNumber == userAccountNumber).ToList();
 
-            return privateOrdersBook;
+            return Ok(privateOrdersBook);
         }
 
         // POST api/orders/buy

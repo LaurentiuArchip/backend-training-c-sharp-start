@@ -4,6 +4,67 @@
         <name>ScottLogic.Internal.Training.Api</name>
     </assembly>
     <members>
+        <member name="T:ScottLogic.Internal.Training.Api.Controllers.LoginController">
+            <summary>
+            Contains user login endpoint.
+            </summary>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.LoginController.#ctor(Microsoft.Extensions.Configuration.IConfiguration,ScottLogic.Internal.Training.Api.ApiContext)">
+            <summary>
+            The class constructor.
+            </summary>
+            <param name="config"> Instance of the app configurations.</param>
+            <param name="context"> Instance of the database context.</param>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.LoginController.Login(ScottLogic.Internal.Training.Api.User)">
+            <summary>
+            Provides the Login functionality.
+            </summary>
+            <returns>The status of the login opperation, and if successful an access token</returns>
+            <response code="200">Authentication successful, and the access token.</response>
+            <response code="401">UnAuthorized, denies access.</response>
+            <example>GET api/users</example>
+        </member>
+        <member name="T:ScottLogic.Internal.Training.Api.Controllers.OrdersController">
+            <summary>
+            Contains all endpoints to access Orders.
+            </summary>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.OrdersController.#ctor(ScottLogic.Internal.Training.Matcher.IOrderMatcher)">
+            <summary>
+            The class constructor.
+            </summary>
+            <param name="matcher"> Instance of OrderMatcher.</param>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.OrdersController.Get">
+            <summary>
+            Get the existing orders.
+            </summary>
+            <returns>a List with the existing ordres.</returns>
+            <example>GET api/orders</example>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.OrdersController.Buy(ScottLogic.Internal.Training.Matcher.Order)">
+            <summary>
+            Places a new order that wants to buy.
+            </summary>
+            <param name="currentOrder">The order to add.</param>
+            <returns>A confirmation message.</returns>
+            <response code="200">If a Match is found, and a Trade is created</response>
+            <response code="200">If a Match is not found, and the Order is added to Existing Orders</response>
+            <response code="400">If the order data posted is invalid</response>
+            <example>GET api/order/Buy</example>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.OrdersController.Sell(ScottLogic.Internal.Training.Matcher.Order)">
+            <summary>
+            Places a new order that wants to sell.
+            </summary>
+            <param name="currentOrder">The order to add.</param>
+            <returns>A confirmation message.</returns>
+            <response code="200">If a Match is found, and a Trade is created</response>
+            <response code="200">If a Match is not found, and the Order is added to Existing Orders</response>
+            <response code="400">If the order data posted is invalid</response>
+            <example>GET api/order/Sell</example>
+        </member>
         <member name="T:ScottLogic.Internal.Training.Api.Controllers.TradesController">
             <summary>
             Contains all endpoints to access Trades.
@@ -56,6 +117,7 @@
             <summary>
             Deletes a user from the database.
             </summary>
+            <param name="user">The user to add.</param>
             <returns>A confirmation message.</returns>
             <response code="200">If the user is removed from the database</response>
             <response code="404">If the user is not found in database</response>

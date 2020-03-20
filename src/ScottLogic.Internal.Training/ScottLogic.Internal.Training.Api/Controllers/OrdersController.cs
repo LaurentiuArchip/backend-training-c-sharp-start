@@ -66,11 +66,23 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             }
             else
             {
-                return BadRequest("Invalid order!");
+                return BadRequest();
             }
         }
 
         // POST api/orders/sell
+        /// <summary>
+        /// Places a new order that wants to sell.
+        /// </summary>
+        /// <param name="currentOrder">The order to add.</param>
+        /// <returns>A confirmation message.</returns>
+        /// <response code="200">If a Match is found, and a Trade is created</response>
+        /// <response code="200">If a Match is not found, and the Order is added to Existing Orders</response>
+        /// <response code="400">If the order data posted is invalid</response>
+        /// <example>GET api/order/Sell</example>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("sell")]
         public IActionResult Sell([FromBody] Order currentOrder)
@@ -86,7 +98,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             }
             else
             {
-                return BadRequest("Invalid order!");
+                return BadRequest();
             }
         }
     }

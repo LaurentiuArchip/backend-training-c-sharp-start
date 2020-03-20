@@ -114,7 +114,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             // Invalid request
             return BadRequest("Invalid user data!");
         }
-        private string[] EncryptPassword(string password)
+        public string[] EncryptPassword(string password)
         {
             // 1.Genrerate Salt value
             const int SALT_SIZE = 32;

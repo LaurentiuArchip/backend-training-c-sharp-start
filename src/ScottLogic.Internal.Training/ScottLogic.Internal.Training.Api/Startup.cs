@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using ScottLogic.Internal.Training.Matcher;
 using Microsoft.EntityFrameworkCore;
+using ScottLogic.Internal.Training.Api.Controllers;
 
 namespace ScottLogic.Internal.Training.Api
 {
@@ -100,8 +101,13 @@ namespace ScottLogic.Internal.Training.Api
             var testUser1 = new User
             {
                 Username = "Luke",
-                Password = "password2"
+                Password = "password2",
             };
+            var userModel = new UsersController(context);
+            var saltPassword = userModel.EncryptPassword(testUser1.Password);
+            testUser1.Salt = saltPassword[0];
+            testUser1.Password = saltPassword[1];
+
             context.Users.Add(testUser1);
             context.SaveChanges();
         }

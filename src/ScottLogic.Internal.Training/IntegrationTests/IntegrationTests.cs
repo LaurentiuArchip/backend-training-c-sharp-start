@@ -7,6 +7,7 @@ using ScottLogic.Internal.Training.Matcher;
 using Xunit;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace IntegrationTests
 {
@@ -35,12 +36,11 @@ namespace IntegrationTests
             Assert.Equal(expected, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData("api/orders")]
-        [InlineData("api/trades")]
-        public async Task Get_Endpoints_Authorized_ReturnSuccessAndCorrectContentType(string url)
+        [Fact]
+        public async Task Get_Trades_Authorized_ReturnSuccessAndCorrectContentType()
         {
             // Arrange
+            string url = "api/trades";
             var client = _factory.CreateClient();
             var requestLogin = new
             {
@@ -57,6 +57,43 @@ namespace IntegrationTests
             var tokenKey = "token";
             var currentToken = currentTokenJson.GetValue(tokenKey).ToString();
             
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
+
+            var expectedTrades = new List<Trade>();
+
+            // Act
+            var response = await client.GetAsync(url);
+            var contentString = await response.Content.ReadAsStringAsync();
+            var existingTrades = JsonConvert.DeserializeObject<IList<Trade>>(contentString);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal("application/json; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+            Assert.Equal(expectedTrades, existingTrades);
+        }
+
+        [Fact]
+        public async Task Get_Orders_Authorized_ReturnSuccessAndCorrectContentType()
+        {
+            // Arrange
+            string url = "api/orders";
+            var client = _factory.CreateClient();
+            var requestLogin = new
+            {
+                Url = "api/login",
+                Body = new
+                {
+                    Username = "Luke",
+                    Password = "password2"
+                }
+            };
+            var responseLogin = await client.PostAsync(requestLogin.Url, ContentHelper.GetStringContent(requestLogin.Body));
+            var currentTokenString = await responseLogin.Content.ReadAsStringAsync();
+            var currentTokenJson = JObject.Parse(currentTokenString);
+            var tokenKey = "token";
+            var currentToken = currentTokenJson.GetValue(tokenKey).ToString();
+
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
 
             var expectedOrders = new List<Order>();
@@ -107,6 +144,7 @@ namespace IntegrationTests
 
                 // Set up the Http client and the authorization
             var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add("X-API-Version", "2");
             var requestLogin = new
             {
                 Url = "api/login",

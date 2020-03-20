@@ -43,6 +43,13 @@
             <returns>a List with the existing ordres.</returns>
             <example>GET api/orders</example>
         </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.OrdersController.Get(System.Int32)">
+            <summary>
+            Get the existing orders for this particular user AccountNumber.
+            </summary>
+            <returns>a List with the existing ordres for a specific account number.</returns>
+            <example>GET api/orders/{1004}</example>
+        </member>
         <member name="M:ScottLogic.Internal.Training.Api.Controllers.OrdersController.Buy(ScottLogic.Internal.Training.Matcher.Order)">
             <summary>
             Places a new order that wants to buy.

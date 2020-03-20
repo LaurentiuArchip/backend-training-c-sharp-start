@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ScottLogic.Internal.Training.Matcher;
+using System;
+using System.Linq;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
@@ -36,6 +38,20 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         public IActionResult Get()
         {
             return Ok(_matcher.ExistingOrders);
+        }
+
+        // GET api/orders/{userAccountNumber}
+        /// <summary>
+        /// Get the existing orders for this particular user AccountNumber.
+        /// </summary>
+        /// <returns>a List with the existing ordres for a specific account number.</returns>
+        /// <example>GET api/orders/{1004}</example>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public object Get(int userAccountNumber)
+        {
+            var privateOrdersBook = _matcher.ExistingOrders.Where(order => order.AccountNumber == userAccountNumber).ToList();
+
+            return privateOrdersBook;
         }
 
         // POST api/orders/buy

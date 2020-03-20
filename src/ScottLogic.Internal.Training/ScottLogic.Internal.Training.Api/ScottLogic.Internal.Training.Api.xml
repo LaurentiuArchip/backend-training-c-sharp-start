@@ -6,21 +6,60 @@
     <members>
         <member name="T:ScottLogic.Internal.Training.Api.Controllers.TradesController">
             <summary>
-            Contains all endpoints to access Trades
+            Contains all endpoints to access Trades.
             </summary>
         </member>
         <member name="M:ScottLogic.Internal.Training.Api.Controllers.TradesController.#ctor(ScottLogic.Internal.Training.Matcher.IOrderMatcher)">
             <summary>
-            The class constructor
+            The class constructor.
             </summary>
-            <param name="matcher"> Instance of OrderMatcher</param>
+            <param name="matcher"> Instance of OrderMatcher.</param>
         </member>
         <member name="M:ScottLogic.Internal.Training.Api.Controllers.TradesController.Get">
             <summary>
-            Get the existing trades
+            Get the existing trades.
             </summary>
-            <returns>a List with the existing trades</returns>
+            <returns>a List with the existing trades.</returns>
             <example>GET api/trades</example>
+        </member>
+        <member name="T:ScottLogic.Internal.Training.Api.Controllers.UsersController">
+            <summary>
+            Contains all endpoints to access Users.
+            </summary>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.UsersController.#ctor(ScottLogic.Internal.Training.Api.ApiContext)">
+            <summary>
+            The class constructor.
+            </summary>
+            <param name="context"> Instance of the database context.</param>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.UsersController.Get">
+            <summary>
+            Get the existing users.
+            </summary>
+            <returns>a List with the existing users.</returns>
+            <response code="200">Returns the list of existing users.</response>
+            <example>GET api/users</example>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.UsersController.AddUser(ScottLogic.Internal.Training.Api.User)">
+            <summary>
+            Adds a user to the database.
+            </summary>
+            <param name="user">The user to add.</param>
+            <returns>A confirmation message.</returns>
+            <response code="200">If the user is added to the database</response>
+            <response code="409">If the user is already present in the database</response>
+            <response code="400">If the user data posted is invalid</response>
+            <example>GET api/users/AddUser</example>
+        </member>
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.UsersController.Delete(ScottLogic.Internal.Training.Api.User)">
+            <summary>
+            Deletes a user from the database.
+            </summary>
+            <returns>A confirmation message.</returns>
+            <response code="200">If the user is removed from the database</response>
+            <response code="404">If the user is not found in database</response>
+            <response code="400">If the user data posted is invalid</response>
         </member>
     </members>
 </doc>

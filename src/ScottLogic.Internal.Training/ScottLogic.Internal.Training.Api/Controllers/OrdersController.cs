@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileSystemGlobbing;
 using ScottLogic.Internal.Training.Matcher;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
+    /// <summary>
+    /// Contains all endpoints to access Orders.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -18,19 +16,41 @@ namespace ScottLogic.Internal.Training.Api.Controllers
     {
         private IOrderMatcher _matcher;
 
+        /// <summary>
+        /// The class constructor.
+        /// </summary>
+        /// <param name="matcher"> Instance of OrderMatcher.</param>
         public OrdersController(IOrderMatcher matcher)
         {
             _matcher = matcher;
         }
 
-       // GET api/orders
-       [HttpGet]
+        // GET api/orders
+        /// <summary>
+        /// Get the existing orders.
+        /// </summary>
+        /// <returns>a List with the existing ordres.</returns>
+        /// <example>GET api/orders</example>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet]
         public IActionResult Get()
         {
             return Ok(_matcher.ExistingOrders);
         }
 
         // POST api/orders/buy
+        /// <summary>
+        /// Places a new order that wants to buy.
+        /// </summary>
+        /// <param name="currentOrder">The order to add.</param>
+        /// <returns>A confirmation message.</returns>
+        /// <response code="200">If a Match is found, and a Trade is created</response>
+        /// <response code="200">If a Match is not found, and the Order is added to Existing Orders</response>
+        /// <response code="400">If the order data posted is invalid</response>
+        /// <example>GET api/order/Buy</example>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("buy")]
         public IActionResult Buy([FromBody] Order currentOrder)
@@ -46,7 +66,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Invalid order!");
             }
         }
 
@@ -66,7 +86,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Invalid order!");
             }
         }
     }

@@ -4,12 +4,16 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
+    /// <summary>
+    /// Contains user login endpoint.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
@@ -17,12 +21,26 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         private readonly IConfiguration _config;
         private readonly ApiContext _context;
 
+        /// <summary>
+        /// The class constructor.
+        /// </summary>
+        /// <param name="config"> Instance of the app configurations.</param>
+        /// <param name="context"> Instance of the database context.</param>
         public LoginController(IConfiguration config, ApiContext context)
         {
             _config = config;
             _context = context;
         }
 
+        /// <summary>
+        /// Provides the Login functionality.
+        /// </summary>
+        /// <returns>The status of the login opperation, and if successful an access token</returns>
+        /// <response code="200">Authentication successful, and the access token.</response>
+        /// <response code="401">UnAuthorized, denies access.</response>
+        /// <example>GET api/users</example>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [AllowAnonymous]
         [HttpPost]
         public IActionResult Login([FromBody]User login)

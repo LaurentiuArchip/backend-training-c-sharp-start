@@ -71,6 +71,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [Route("buy")]
         public IActionResult Buy([FromBody] Order currentOrder)
         {
+            System.Diagnostics.Debug.WriteLine("The request", Request);
             if (currentOrder.Action == OrderType.Buy)
             {
                 var status = _matcher.ProcessOrder(currentOrder);

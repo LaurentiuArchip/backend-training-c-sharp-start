@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ScottLogic.Internal.Training.Matcher;
 using System;
 using System.Linq;
+using System.Security.Claims;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
@@ -72,8 +73,16 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [Route("buy")]
         public IActionResult Buy([FromBody] Order currentOrder)
         {
-            System.Diagnostics.Debug.WriteLine("The request", Request);
-            if (currentOrder.Action == OrderType.Buy)
+            // Get the user account number from the access token
+            var userIdentity = this.User.Identity as ClaimsIdentity;
+            var userAccount = 0;
+            if (userIdentity != null && userIdentity.HasClaim(c => c.Type == "AccountNumber"))
+            {
+                userAccount = Int32.Parse(userIdentity.Claims
+                    .FirstOrDefault(c => c.Type == "AccountNumber").Value);
+            }
+            // Check if the order is valid
+            if (userAccount == currentOrder.AccountNumber && currentOrder.Action == OrderType.Buy)
             {
                 var status = _matcher.ProcessOrder(currentOrder);
                 if (status)
@@ -104,14 +113,23 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [Route("sell")]
         public IActionResult Sell([FromBody] Order currentOrder)
         {
-            if (currentOrder.Action == OrderType.Sell)
+            // Get the user account number from the access token
+            var userIdentity = this.User.Identity as ClaimsIdentity;
+            var userAccount = 0;
+            if (userIdentity != null && userIdentity.HasClaim(c => c.Type == "AccountNumber"))
+            {
+                userAccount = Int32.Parse(userIdentity.Claims
+                    .FirstOrDefault(c => c.Type == "AccountNumber").Value);
+            }
+            // Check if the order is valid
+            if (userAccount == currentOrder.AccountNumber && currentOrder.Action == OrderType.Sell)
             {
                 var status = _matcher.ProcessOrder(currentOrder);
-               if (status)
-               {
-                   return Ok("Match found, Trade created");
-               }
-               return Ok("Match not found, Order added to Existing Orders");
+                if (status)
+                {
+                    return Ok("Match found, Trade created");
+                }
+                return Ok("Match not found, Order added to Existing Orders");
             }
             else
             {

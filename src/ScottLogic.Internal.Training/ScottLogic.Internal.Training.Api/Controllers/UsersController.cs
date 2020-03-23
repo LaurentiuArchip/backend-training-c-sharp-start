@@ -1,34 +1,60 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ScottLogic.Internal.Training.Api.Controllers
 {
+    /// <summary>
+    /// Contains all endpoints to access Users.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly ApiContext _context;
 
+        /// <summary>
+        /// The class constructor.
+        /// </summary>
+        /// <param name="context"> Instance of the database context.</param>
         public UsersController(ApiContext context)
         {
             _context = context;
         }
-        
-        //Get ------Just for Testing
+
+        //Get ------Just for Testing -- And for admin users
+        /// <summary>
+        /// Get the existing users.
+        /// </summary>
+        /// <returns>a List with the existing users.</returns>
+        /// <response code="200">Returns the list of existing users.</response>
+        /// <example>GET api/users</example>
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
             return Ok(_context.Users);
         }
 
         // POST: api/Users
+        /// <summary>
+        /// Adds a user to the database.
+        /// </summary>
+        /// <param name="user">The user to add.</param>
+        /// <returns>A confirmation message.</returns>
+        /// <response code="200">If the user is added to the database</response>
+        /// <response code="400">If the user data posted is invalid</response>
+        /// <response code="409">If the user is already present in the database</response>
+        /// <example>GET api/users/AddUser</example>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] User user)
+        public async Task<IActionResult> AddUser([FromBody] User user)
         {
             if (user.Username != null)
             {
@@ -59,6 +85,17 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         }
 
         // DELETE: api/ApiWithActions/user
+        /// <summary>
+        /// Deletes a user from the database.
+        /// </summary>
+        /// <param name="user">The user to add.</param>
+        /// <returns>A confirmation message.</returns>
+        /// <response code="200">If the user is removed from the database</response>
+        /// <response code="400">If the user data posted is invalid</response>
+        /// <response code="404">If the user is not found in database</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] User user)
         {
@@ -75,9 +112,9 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 return NotFound("User not found in database");
             }
             // Invalid request
-            return BadRequest();
+            return BadRequest("Invalid user data!");
         }
-        private string[] EncryptPassword(string password)
+        public string[] EncryptPassword(string password)
         {
             // 1.Genrerate Salt value
             const int SALT_SIZE = 32;

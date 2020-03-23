@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Moq;
 using Xunit;
 using ScottLogic.Internal.Training.Api.Controllers;
+using System.Security.Claims;
+using Newtonsoft.Json;
 
 namespace ScottLogic.Internal.Training.Api.Tests
 {
@@ -143,6 +145,13 @@ namespace ScottLogic.Internal.Training.Api.Tests
                 var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 14);
                 matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
                 var controller = new OrdersController(matcherMock.Object);
+                // Add user Identity data
+                var account = new { AccountNumber = "1005"};
+                var some = new { Claims = account};
+                var user = JsonConvert.SerializeObject(some);
+
+                var userIdentity = new ClaimsIdentity (user);
+                //controller.HttpContext = null;
 
                 var controllerResponse = controller.Buy(currentOrder);
                 var objectResponse = controllerResponse as OkObjectResult;

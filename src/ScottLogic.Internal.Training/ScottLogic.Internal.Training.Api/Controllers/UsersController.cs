@@ -47,12 +47,12 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// <param name="user">The user to add.</param>
         /// <returns>A confirmation message.</returns>
         /// <response code="200">If the user is added to the database</response>
-        /// <response code="409">If the user is already present in the database</response>
         /// <response code="400">If the user data posted is invalid</response>
+        /// <response code="409">If the user is already present in the database</response>
         /// <example>GET api/users/AddUser</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] User user)
         {
@@ -91,11 +91,11 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// <param name="user">The user to add.</param>
         /// <returns>A confirmation message.</returns>
         /// <response code="200">If the user is removed from the database</response>
-        /// <response code="404">If the user is not found in database</response>
         /// <response code="400">If the user data posted is invalid</response>
+        /// <response code="404">If the user is not found in database</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] User user)
         {

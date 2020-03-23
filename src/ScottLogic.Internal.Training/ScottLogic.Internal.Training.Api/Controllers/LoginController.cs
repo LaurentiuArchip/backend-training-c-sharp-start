@@ -65,7 +65,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             var claims = new[]
             {
                 new Claim("UserName" , userInfo.Username),
-                new Claim("AccountNumber" , "1005")
+                new Claim("AccountNumber" , userInfo.AccountNumber.ToString())
             };
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
@@ -87,8 +87,9 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 // Check the password
             if (existingUser.Count() == 1 && CheckEncryptedPassword(existingUser[0], login.Password))
             {
-                user = new User { Username = login.Username,
-                                Password = login.Password
+                user = new User { Username = existingUser[0].Username,
+                                Password = existingUser[0].Password,
+                                AccountNumber = existingUser[0].AccountNumber
                 };
             }
             return user;

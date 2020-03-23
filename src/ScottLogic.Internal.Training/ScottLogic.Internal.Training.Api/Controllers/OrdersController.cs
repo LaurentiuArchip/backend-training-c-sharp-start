@@ -32,6 +32,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// Get the existing orders.
         /// </summary>
         /// <returns>a List with the existing ordres.</returns>
+        /// <response code="200">The existing orders are retrieved successfully</response>
         /// <example>GET api/orders</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
@@ -45,6 +46,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// Get the existing orders for this particular user AccountNumber.
         /// </summary>
         /// <returns>a List with the existing ordres for a specific account number.</returns>
+        /// <response code="200">The private orders book is retrieved successfully</response>
         /// <example>GET api/orders/{1004}</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get(int userAccountNumber)
@@ -65,7 +67,6 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// <response code="400">If the order data posted is invalid</response>
         /// <example>GET api/order/Buy</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("buy")]
@@ -98,7 +99,6 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// <response code="400">If the order data posted is invalid</response>
         /// <example>GET api/order/Sell</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("sell")]

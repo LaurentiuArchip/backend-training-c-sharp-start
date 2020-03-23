@@ -29,6 +29,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// Get the existing trades.
         /// </summary>
         /// <returns>a List with the existing trades.</returns>
+        /// <response code="200">The existing trades are retrieved successfully</response>
         /// <example>GET api/trades</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]

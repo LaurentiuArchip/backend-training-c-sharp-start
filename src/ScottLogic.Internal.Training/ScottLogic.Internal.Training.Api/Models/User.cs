@@ -13,5 +13,6 @@ namespace ScottLogic.Internal.Training.Api
         [Required]
         public string Password { get; set; }
         public string Salt { get; set; }
+        public string UserRole { get; set; }
     }
 }

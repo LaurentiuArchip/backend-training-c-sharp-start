@@ -75,14 +75,14 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         {
             // Get the user account number from the access token
             var userIdentity = this.User.Identity as ClaimsIdentity;
-            var userAccount = 0;
+            int? userAccount = null;
             if (userIdentity != null && userIdentity.HasClaim(c => c.Type == "AccountNumber"))
             {
                 userAccount = Int32.Parse(userIdentity.Claims
                     .FirstOrDefault(c => c.Type == "AccountNumber").Value);
             }
             // Check if the order is valid
-            if (userAccount == currentOrder.AccountNumber && currentOrder.Action == OrderType.Buy)
+            if (userAccount != null && userAccount == currentOrder.AccountNumber && currentOrder.Action == OrderType.Buy)
             {
                 var status = _matcher.ProcessOrder(currentOrder);
                 if (status)
@@ -115,14 +115,14 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         {
             // Get the user account number from the access token
             var userIdentity = this.User.Identity as ClaimsIdentity;
-            var userAccount = 0;
+            int? userAccount = null;
             if (userIdentity != null && userIdentity.HasClaim(c => c.Type == "AccountNumber"))
             {
                 userAccount = Int32.Parse(userIdentity.Claims
                     .FirstOrDefault(c => c.Type == "AccountNumber").Value);
             }
             // Check if the order is valid
-            if (userAccount == currentOrder.AccountNumber && currentOrder.Action == OrderType.Sell)
+            if (userAccount != null && userAccount == currentOrder.AccountNumber && currentOrder.Action == OrderType.Sell)
             {
                 var status = _matcher.ProcessOrder(currentOrder);
                 if (status)

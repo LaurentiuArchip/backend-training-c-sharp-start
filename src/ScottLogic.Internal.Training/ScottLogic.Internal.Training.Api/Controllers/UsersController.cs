@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,10 +35,11 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// <response code="200">Returns the list of existing users.</response>
         /// <example>GET api/users</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_context.Users);
+            return Ok(_context.Users.ToList());
         }
 
         // POST: api/Users
@@ -96,6 +98,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Administrator")]
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] User user)
         {

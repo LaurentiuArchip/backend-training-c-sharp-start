@@ -102,6 +102,7 @@ namespace ScottLogic.Internal.Training.Api
             {
                 Username = "Luke",
                 Password = "password2",
+                UserRole = "Admin"
             };
             var userModel = new UsersController(context);
             var saltPassword = userModel.EncryptPassword(testUser1.Password);

@@ -7,6 +7,8 @@ using ScottLogic.Internal.Training.Api.Controllers;
 using System.Security.Claims;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ScottLogic.Internal.Training.Api.Tests
 {
@@ -346,7 +348,50 @@ namespace ScottLogic.Internal.Training.Api.Tests
         }
         public class UserControllerTests
         {
-            // TO DO
+            [Fact]
+            public async Task GetUsers_FromEmptyDb_ReturnsOkStatus()
+            {
+                var options = new DbContextOptionsBuilder<ApiContext>()
+                    .UseInMemoryDatabase("usersDb").Options;
+                var apiContext = new ApiContext(options);
+                
+                var controller = new UsersController(apiContext);
+
+                var getZeroUsersResult = controller.Get();
+                var objectResponse = getZeroUsersResult as ObjectResult;
+
+                apiContext.Dispose();
+
+                Assert.Equal(200, objectResponse.StatusCode);
+            }
+
+            [Fact]
+            public async Task AddUser_ReturnsOkStatus()
+            {
+                var options = new DbContextOptionsBuilder<ApiContext>()
+                    .UseInMemoryDatabase("usersDb").Options;
+                var apiContext = new ApiContext(options);
+                var controller = new UsersController(apiContext);
+
+                var testUser1 = new User
+                {
+                    Username = "Luke",
+                    Password = "password2",
+                    UserRole = "Admin"
+                };
+
+                var result = await controller.AddUser(testUser1);
+                var getUsersResult = controller.Get();
+                var objectResponse = getUsersResult as ObjectResult;
+                var users = objectResponse.Value as List<User>;
+                //var oneUser = (DbSet<User>)users.ToList();
+                var oU = users[0];
+
+                Assert.NotNull(objectResponse);
+                Assert.Equal(200, objectResponse.StatusCode);
+                Assert.Equal("Luke", users[0].Username);
+                apiContext.Dispose();
+            }       
         }
     }
 }

@@ -6,6 +6,7 @@ using Xunit;
 using ScottLogic.Internal.Training.Api.Controllers;
 using System.Security.Claims;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace ScottLogic.Internal.Training.Api.Tests
 {
@@ -96,11 +97,28 @@ namespace ScottLogic.Internal.Training.Api.Tests
             [Fact]
             public void PostSell_ReturnsOkStatus_Trade()
             {
+                // Setup a mock matcher
                 var matcherMock = new Mock<IOrderMatcher>();
                 var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
                 matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
-                var controller = new OrdersController(matcherMock.Object);
 
+                // Add user Identity data
+                var userClaims = new[] { new Claim("AccountNumber", "1001") };
+                var userIdentity = new ClaimsIdentity(userClaims);
+
+                // Initialize the controller
+                var controller = new OrdersController(matcherMock.Object)
+                {
+                    ControllerContext = new ControllerContext
+                    {
+                        HttpContext = new DefaultHttpContext
+                        {
+                            User = new ClaimsPrincipal(userIdentity)
+                        }
+                    }
+                };
+
+                // Act
                 var controllerResponse = controller.Sell(currentOrder);
                 var objectResponse = controllerResponse as OkObjectResult;
 
@@ -111,14 +129,31 @@ namespace ScottLogic.Internal.Training.Api.Tests
             [Fact]
             public void PostSell_ReturnsOkStatus_NoTrade()
             {
+                // Setup a mock matcher
                 var matcherMock = new Mock<IOrderMatcher>();
                 var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
                 matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(false);
-                var controller = new OrdersController(matcherMock.Object);
 
+                // Add user Identity data
+                var userClaims = new[] { new Claim("AccountNumber", "1001") };
+                var userIdentity = new ClaimsIdentity(userClaims);
+
+                // Initialize the controller
+                var controller = new OrdersController(matcherMock.Object)
+                {
+                    ControllerContext = new ControllerContext
+                    {
+                        HttpContext = new DefaultHttpContext
+                        {
+                            User = new ClaimsPrincipal(userIdentity)
+                        }
+                    }
+                };
+
+                // Act
                 var controllerResponse = controller.Sell(currentOrder);
                 var objectResponse = controllerResponse as OkObjectResult;
-
+               
                 Assert.Equal(200, objectResponse.StatusCode);
                 Assert.Equal("Match not found, Order added to Existing Orders", objectResponse.Value);
             }
@@ -126,33 +161,59 @@ namespace ScottLogic.Internal.Training.Api.Tests
             [Fact]
             public void PostSell_WrongAccountNumber_ReturnsBadRequest()
             {
+                // Setup a mock matcher
                 var matcherMock = new Mock<IOrderMatcher>();
                 var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
                 matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
-                var controller = new OrdersController(matcherMock.Object);
 
+                // Add user Identity data
+                var userClaims = new[] { new Claim("AccountNumber", "1005") };
+                var userIdentity = new ClaimsIdentity(userClaims);
+
+                // Initialize the controller
+                var controller = new OrdersController(matcherMock.Object)
+                {
+                    ControllerContext = new ControllerContext
+                    {
+                        HttpContext = new DefaultHttpContext
+                        {
+                            User = new ClaimsPrincipal(userIdentity)
+                        }
+                    }
+                };
+
+                // Act
                 var controllerResponse = controller.Sell(currentOrder);
-                var objectResponse = controllerResponse as OkObjectResult;
+                var objectResponse = controllerResponse as BadRequestResult;
 
-                Assert.Equal(200, objectResponse.StatusCode);
-                Assert.Equal("Match found, Trade created", objectResponse.Value);
+                Assert.Equal(400, objectResponse.StatusCode);
             }
 
             [Fact]
             public void PostBuy_ReturnsOkStatus_Trade()
             {
+                // Setup a mock matcher
                 var matcherMock = new Mock<IOrderMatcher>();
                 var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 14);
                 matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
-                var controller = new OrdersController(matcherMock.Object);
+
                 // Add user Identity data
-                var account = new { AccountNumber = "1005"};
-                var some = new { Claims = account};
-                var user = JsonConvert.SerializeObject(some);
+                var userClaims = new[] { new Claim("AccountNumber", "1001") };
+                var userIdentity = new ClaimsIdentity(userClaims);
 
-                var userIdentity = new ClaimsIdentity (user);
-                //controller.HttpContext = null;
+                // Initialize the controller
+                var controller = new OrdersController(matcherMock.Object)
+                {
+                    ControllerContext = new ControllerContext
+                    {
+                        HttpContext = new DefaultHttpContext
+                        {
+                            User = new ClaimsPrincipal(userIdentity)
+                        }
+                    }
+                };
 
+                // Act
                 var controllerResponse = controller.Buy(currentOrder);
                 var objectResponse = controllerResponse as OkObjectResult;
 
@@ -163,11 +224,28 @@ namespace ScottLogic.Internal.Training.Api.Tests
             [Fact]
             public void PostBuy_ReturnsOkStatus_NoTrade()
             {
+                // Setup a mock matcher
                 var matcherMock = new Mock<IOrderMatcher>();
                 var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 14);
                 matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(false);
-                var controller = new OrdersController(matcherMock.Object);
+                
+                // Add user Identity data
+                var userClaims = new[] { new Claim("AccountNumber", "1001") };
+                var userIdentity = new ClaimsIdentity(userClaims);
 
+                // Initialize the controller
+                var controller = new OrdersController(matcherMock.Object)
+                {
+                    ControllerContext = new ControllerContext
+                    {
+                        HttpContext = new DefaultHttpContext
+                        {
+                            User = new ClaimsPrincipal(userIdentity)
+                        }
+                    }
+                };
+
+                // Act
                 var controllerResponse = controller.Buy(currentOrder);
                 var objectResponse = controllerResponse as OkObjectResult;
 
@@ -176,12 +254,60 @@ namespace ScottLogic.Internal.Training.Api.Tests
             }
 
             [Fact]
-            public void PostBuy_InsteadOfSell_ReturnsBadRequest()
+            public void PostBuy_WrongAccountNumber_ReturnsBadRequest()
             {
+                // Setup a mock matcher
                 var matcherMock = new Mock<IOrderMatcher>();
                 var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 14);
-                var controller = new OrdersController(matcherMock.Object);
+                matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
 
+                // Add user Identity data
+                var userClaims = new[] { new Claim("AccountNumber", "1005") };
+                var userIdentity = new ClaimsIdentity(userClaims);
+
+                // Initialize the controller
+                var controller = new OrdersController(matcherMock.Object)
+                {
+                    ControllerContext = new ControllerContext
+                    {
+                        HttpContext = new DefaultHttpContext
+                        {
+                            User = new ClaimsPrincipal(userIdentity)
+                        }
+                    }
+                };
+
+                // Act
+                var controllerResponse = controller.Buy(currentOrder);
+                var objectResponse = controllerResponse as BadRequestResult;
+
+                Assert.Equal(400, objectResponse.StatusCode);
+            }
+
+            [Fact]
+            public void PostBuy_InsteadOfSell_ReturnsBadRequest()
+            {
+                // Setup a mock matcher
+                var matcherMock = new Mock<IOrderMatcher>();
+                var currentOrder = new Order(1001, 45, 55, OrderType.Buy, 14);
+                
+                // Add user Identity data
+                var userClaims = new[] { new Claim("AccountNumber", "1005") };
+                var userIdentity = new ClaimsIdentity(userClaims);
+
+                // Initialize the controller
+                var controller = new OrdersController(matcherMock.Object)
+                {
+                    ControllerContext = new ControllerContext
+                    {
+                        HttpContext = new DefaultHttpContext
+                        {
+                            User = new ClaimsPrincipal(userIdentity)
+                        }
+                    }
+                };
+
+                // Act
                 var controllerResponse = controller.Sell(currentOrder);
                 var objectResponse = controllerResponse as BadRequestResult;
 
@@ -191,10 +317,27 @@ namespace ScottLogic.Internal.Training.Api.Tests
             [Fact]
             public void PostSell_InsteadOfBuy_ReturnsBadRequest()
             {
+                // Setup a mock matcher
                 var matcherMock = new Mock<IOrderMatcher>();
                 var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
-                var controller = new OrdersController(matcherMock.Object);
+                
+                // Add user Identity data
+                var userClaims = new[] { new Claim("AccountNumber", "1001") };
+                var userIdentity = new ClaimsIdentity(userClaims);
 
+                // Initialize the controller
+                var controller = new OrdersController(matcherMock.Object)
+                {
+                    ControllerContext = new ControllerContext
+                    {
+                        HttpContext = new DefaultHttpContext
+                        {
+                            User = new ClaimsPrincipal(userIdentity)
+                        }
+                    }
+                };
+
+                // Act
                 var controllerResponse = controller.Buy(currentOrder);
                 var objectResponse = controllerResponse as BadRequestResult;
 
@@ -203,35 +346,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
         }
         public class UserControllerTests
         {
-            [Fact]
-            public void PostUser_ReturnsOkStatus()
-            {
-                var matcherMock = new Mock<IOrderMatcher>();
-                var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
-                matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
-                var controller = new OrdersController(matcherMock.Object);
-
-                var controllerResponse = controller.Sell(currentOrder);
-                var objectResponse = controllerResponse as OkObjectResult;
-
-                Assert.Equal(200, objectResponse.StatusCode);
-                Assert.Equal("Match found, Trade created", objectResponse.Value);
-            }
-
-            [Fact]
-            public void PostUser_ReturnsUserAlreadyExists()
-            {
-                var matcherMock = new Mock<IOrderMatcher>();
-                var currentOrder = new Order(1001, 45, 55, OrderType.Sell, 14);
-                matcherMock.Setup(matcher => matcher.ProcessOrder(currentOrder)).Returns(true);
-                var controller = new OrdersController(matcherMock.Object);
-
-                var controllerResponse = controller.Sell(currentOrder);
-                var objectResponse = controllerResponse as OkObjectResult;
-
-                Assert.Equal(200, objectResponse.StatusCode);
-                Assert.Equal("Match found, Trade created", objectResponse.Value);
-            }
+            // TO DO
         }
     }
 }

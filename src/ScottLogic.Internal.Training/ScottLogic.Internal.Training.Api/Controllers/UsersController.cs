@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -98,20 +99,57 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] User user)
         {
-            var users = await _context.Users.ToArrayAsync();
             if (user.Username != null)
             {
-                if (users.Any(currentUser => currentUser.Username == user.Username))
+                // Get the user Role from the access token
+                var userIdentity = this.User.Identity as ClaimsIdentity;
+                var userRole = UserRole.None;
+                if (userIdentity != null && userIdentity.HasClaim(c => c.Type == ClaimTypes.Role))
                 {
-                    _context.Users.Remove(_context.Users.FirstOrDefault(u => u.Username == user.Username));
-                    _context.SaveChanges();
-                    return Ok("User removed from the database");
+                    var userRolesString = userIdentity.Claims
+                        .FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+                    if(userRolesString == "Admin")
+                    {
+                        userRole = UserRole.Admin;
+                    }
                 }
-
+                // Get the existing users from the database
+                var users = await _context.Users.ToArrayAsync();
+                
+                // Delete the user passed in the request
+                if(userRole == UserRole.Admin)
+                {
+                    if (users.Any(currentUser => currentUser.Username == user.Username))
+                    {
+                        _context.Users.Remove(_context.Users.FirstOrDefault(u => u.Username == user.Username));
+                        _context.SaveChanges();
+                        return Ok("User removed from the database");
+                    }
+                }
+                // Non-admin user, allow to delete only their own account
+                else
+                {
+                    // Get the user userName from the access token
+                    string? userName = null;
+                    if (userIdentity != null && userIdentity.HasClaim(c => c.Type == "UserName"))
+                    {
+                        userName = userIdentity.Claims
+                            .FirstOrDefault(c => c.Type == "UserName").Value;
+                        
+                        // Check if user exists in database
+                        if (users.Any(currentUser => currentUser.Username == userName))
+                        {
+                            // Delete user
+                            _context.Users.Remove(_context.Users.FirstOrDefault(u => u.Username == userName));
+                            _context.SaveChanges();
+                            return Ok("User removed from the database");
+                        }
+                    }
+                }
                 return NotFound("User not found in database");
             }
             // Invalid request

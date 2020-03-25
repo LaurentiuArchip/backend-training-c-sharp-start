@@ -23,7 +23,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
             var getZeroUsersResult = controller.Get();
             var objectResponse = getZeroUsersResult as ObjectResult;
 
-            Assert.Equal(401, objectResponse.StatusCode);
+            Assert.Equal(200, objectResponse.StatusCode);
             apiContext.Dispose();
         }
 
@@ -47,7 +47,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
             var users = objectResponse.Value as List<User>;
 
             Assert.NotNull(objectResponse);
-            Assert.Equal(401, objectResponse.StatusCode);
+            Assert.Equal(200, objectResponse.StatusCode);
             Assert.Equal("Tom", users[0].Username);
             apiContext.Dispose();
         }

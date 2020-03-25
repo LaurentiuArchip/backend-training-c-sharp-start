@@ -41,6 +41,7 @@
             Get the existing orders.
             </summary>
             <returns>a List with the existing ordres.</returns>
+            <response code="200">The existing orders are retrieved successfully</response>
             <example>GET api/orders</example>
         </member>
         <member name="M:ScottLogic.Internal.Training.Api.Controllers.OrdersController.Get(System.Int32)">
@@ -48,6 +49,7 @@
             Get the existing orders for this particular user AccountNumber.
             </summary>
             <returns>a List with the existing ordres for a specific account number.</returns>
+            <response code="200">The private orders book is retrieved successfully</response>
             <example>GET api/orders/{1004}</example>
         </member>
         <member name="M:ScottLogic.Internal.Training.Api.Controllers.OrdersController.Buy(ScottLogic.Internal.Training.Matcher.Order)">
@@ -88,6 +90,7 @@
             Get the existing trades.
             </summary>
             <returns>a List with the existing trades.</returns>
+            <response code="200">The existing trades are retrieved successfully</response>
             <example>GET api/trades</example>
         </member>
         <member name="T:ScottLogic.Internal.Training.Api.Controllers.UsersController">
@@ -116,8 +119,8 @@
             <param name="user">The user to add.</param>
             <returns>A confirmation message.</returns>
             <response code="200">If the user is added to the database</response>
-            <response code="409">If the user is already present in the database</response>
             <response code="400">If the user data posted is invalid</response>
+            <response code="409">If the user is already present in the database</response>
             <example>GET api/users/AddUser</example>
         </member>
         <member name="M:ScottLogic.Internal.Training.Api.Controllers.UsersController.Delete(ScottLogic.Internal.Training.Api.User)">
@@ -127,8 +130,8 @@
             <param name="user">The user to add.</param>
             <returns>A confirmation message.</returns>
             <response code="200">If the user is removed from the database</response>
-            <response code="404">If the user is not found in database</response>
             <response code="400">If the user data posted is invalid</response>
+            <response code="404">If the user is not found in database</response>
         </member>
     </members>
 </doc>

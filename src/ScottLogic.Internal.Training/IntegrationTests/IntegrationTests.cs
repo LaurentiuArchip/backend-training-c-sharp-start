@@ -131,7 +131,7 @@ namespace IntegrationTests
 
             // Act
             var response = await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
-            var value = await response.Content.ReadAsStringAsync();
+            await response.Content.ReadAsStringAsync();
 
             // Assert
             Assert.Equal(expected, response.StatusCode);
@@ -144,14 +144,13 @@ namespace IntegrationTests
 
                 // Set up the Http client and the authorization
             var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Add("X-API-Version", "2");
             var requestLogin = new
             {
                 Url = "api/login",
                 Body = new
                 {
                     Username = "Luke",
-                    Password = "password2"
+                    Password = "password2",
                 }
             };
             var responseLogin = await client.PostAsync(requestLogin.Url, ContentHelper.GetStringContent(requestLogin.Body));

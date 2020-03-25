@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
@@ -61,10 +62,16 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var claims = new[]
+            {
+                new Claim("UserName" , userInfo.Username),
+                new Claim(ClaimTypes.Role, userInfo.Role.ToString()),
+                new Claim("AccountNumber" , userInfo.AccountNumber.ToString())
+            };
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                 _config["Jwt:Issuer"],
-                null,
+                claims,
                 expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials);
 
@@ -81,8 +88,10 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 // Check the password
             if (existingUser.Count() == 1 && CheckEncryptedPassword(existingUser[0], login.Password))
             {
-                user = new User { Username = login.Username,
-                                Password = login.Password
+                user = new User { Username = existingUser[0].Username,
+                                Password = existingUser[0].Password,
+                                AccountNumber = existingUser[0].AccountNumber,
+                                Role = existingUser[0].Role
                 };
             }
             return user;

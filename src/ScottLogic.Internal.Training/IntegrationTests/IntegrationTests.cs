@@ -131,7 +131,7 @@ namespace IntegrationTests
 
             // Act
             var response = await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
-            var value = await response.Content.ReadAsStringAsync();
+            await response.Content.ReadAsStringAsync();
 
             // Assert
             Assert.Equal(expected, response.StatusCode);

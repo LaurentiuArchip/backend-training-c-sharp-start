@@ -1,8 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ScottLogic.Internal.Training.Api
 {
+    public enum UserRole
+    {
+        None,
+        Admin,
+        User = 0
+    }
     public class User
     {
         [Key]
@@ -13,6 +20,6 @@ namespace ScottLogic.Internal.Training.Api
         [Required]
         public string Password { get; set; }
         public string Salt { get; set; }
-        public string UserRole { get; set; }
+        public UserRole Role { get; set; }
     }
 }

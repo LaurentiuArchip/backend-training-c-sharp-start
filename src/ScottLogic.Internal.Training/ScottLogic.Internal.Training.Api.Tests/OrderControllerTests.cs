@@ -375,17 +375,15 @@ namespace ScottLogic.Internal.Training.Api.Tests
 
                 var testUser1 = new User
                 {
-                    Username = "Luke",
+                    Username = "Lukas",
                     Password = "password2",
-                    UserRole = "Admin"
+                    //Role = UserRole.User
                 };
 
                 var result = await controller.AddUser(testUser1);
                 var getUsersResult = controller.Get();
                 var objectResponse = getUsersResult as ObjectResult;
                 var users = objectResponse.Value as List<User>;
-                //var oneUser = (DbSet<User>)users.ToList();
-                var oU = users[0];
 
                 Assert.NotNull(objectResponse);
                 Assert.Equal(200, objectResponse.StatusCode);

@@ -65,7 +65,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             var claims = new[]
             {
                 new Claim("UserName" , userInfo.Username),
-                new Claim("UserRole", userInfo.UserRole),
+                new Claim("Roles", userInfo.Role.ToString()),
                 new Claim("AccountNumber" , userInfo.AccountNumber.ToString())
             };
 

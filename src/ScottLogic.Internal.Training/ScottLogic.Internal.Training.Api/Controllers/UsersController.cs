@@ -35,7 +35,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         /// <response code="200">Returns the list of existing users.</response>
         /// <example>GET api/users</example>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Get()
         {

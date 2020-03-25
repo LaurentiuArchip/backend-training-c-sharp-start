@@ -12,7 +12,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
     public class UserControllerTests
     {
         [Fact]
-        public async Task GetUsers_FromEmptyDb_ReturnsOkStatus()
+        public async Task GetUsers_FromEmptyDb_ReturnsUnauthorized()
         {
             var options = new DbContextOptionsBuilder<ApiContext>()
                 .UseInMemoryDatabase("usersDb").Options;
@@ -28,7 +28,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
         }
 
         [Fact]
-        public async Task AddUser_ReturnsOkStatus()
+        public async Task AddUser_GetUsers_ReturnsUnauthorized()
         {
             var options = new DbContextOptionsBuilder<ApiContext>()
                 .UseInMemoryDatabase("usersDb").Options;
@@ -37,9 +37,8 @@ namespace ScottLogic.Internal.Training.Api.Tests
 
             var testUser1 = new User
             {
-                Username = "Luke",
-                Password = "password2",
-                //Role = UserRole.User
+                Username = "Tom",
+                Password = "password3"
             };
 
             var result = await controller.AddUser(testUser1);
@@ -48,8 +47,8 @@ namespace ScottLogic.Internal.Training.Api.Tests
             var users = objectResponse.Value as List<User>;
 
             Assert.NotNull(objectResponse);
-            Assert.Equal(200, objectResponse.StatusCode);
-            Assert.Equal("Luke", users[0].Username);
+            Assert.Equal(401, objectResponse.StatusCode);
+            Assert.Equal("Tom", users[0].Username);
             apiContext.Dispose();
         }
     }

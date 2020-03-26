@@ -123,11 +123,11 @@
             <response code="409">If the user is already present in the database</response>
             <example>GET api/users/AddUser</example>
         </member>
-        <member name="M:ScottLogic.Internal.Training.Api.Controllers.UsersController.Delete(ScottLogic.Internal.Training.Api.User)">
+        <member name="M:ScottLogic.Internal.Training.Api.Controllers.UsersController.DeleteUser(System.String)">
             <summary>
             Deletes a user from the database.
             </summary>
-            <param name="user">The user to add.</param>
+            <param name="userToDelete">The user to delete.</param>
             <returns>A confirmation message.</returns>
             <response code="200">If the user is removed from the database</response>
             <response code="400">If the user data posted is invalid</response>

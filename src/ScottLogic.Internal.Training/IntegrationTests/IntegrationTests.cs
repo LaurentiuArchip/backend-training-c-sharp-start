@@ -163,36 +163,36 @@ namespace IntegrationTests
             
                 // Post orders
             var currentOrder1 = new Order(1001, 50, 60, OrderType.Sell, 17);
-            var request = new
+            var request1 = new
             {
                 Url = "api/orders/sell",
                 Body = currentOrder1
             };
-            await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+            await client.PostAsync(request1.Url, ContentHelper.GetStringContent(request1.Body));
 
             var currentOrder2 = new Order(1001, 50, 60, OrderType.Sell, 18);
-            request = new
+            var request2 = new
             {
                 Url = "api/orders/sell",
                 Body = currentOrder2
             };
-            await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+            await client.PostAsync(request2.Url, ContentHelper.GetStringContent(request2.Body));
 
             var currentOrder3 = new Order(1001, 50, 60, OrderType.Sell, 1);
-            request = new
+            var request3 = new
             {
                 Url = "api/orders/sell",
                 Body = currentOrder3
             };
-            await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+            await client.PostAsync(request3.Url, ContentHelper.GetStringContent(request3.Body));
 
             var currentOrder4 = new Order(1003, 50, 60, OrderType.Buy, 19);
-            request = new
+            var request4 = new
             {
                 Url = "api/orders/buy",
                 Body = currentOrder4
             };
-            await client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+            await client.PostAsync(request4.Url, ContentHelper.GetStringContent(request4.Body));
 
             var expectedOrders = new List<Order>() {currentOrder1, currentOrder2};
             var currentTrade = new Trade(currentOrder4.AccountNumber, currentOrder4.Quantity, currentOrder4.Price, currentOrder4.Action);

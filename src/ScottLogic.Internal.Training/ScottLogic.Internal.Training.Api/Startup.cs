@@ -46,16 +46,15 @@ namespace ScottLogic.Internal.Training.Api
                     .RequireAuthenticatedUser()
                     .Build());
             });
-            services.AddMvc(options => options.EnableEndpointRouting = false);
+            
             services.AddDbContext<ApiContext>(options => options.UseInMemoryDatabase("UsersDb"));
+
             services.AddScoped<ApiContext>();
+
             services.AddSingleton<IOrderMatcher, OrderMatcher>();
+
             services.AddControllers();
-            services.AddMvc().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                options.JsonSerializerOptions.IgnoreNullValues = true;
-            });
+          
             services.AddSwaggerDocument();
         }
 
@@ -75,18 +74,14 @@ namespace ScottLogic.Internal.Training.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseAuthentication();
-            app.UseMvc();
-
-            app.UseHttpsRedirection();
-
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.UseAuthentication();
-
             app.UseOpenApi();
+
             app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>

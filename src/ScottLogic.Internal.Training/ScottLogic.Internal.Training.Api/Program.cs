@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace ScottLogic.Internal.Training.Api
@@ -15,7 +14,7 @@ namespace ScottLogic.Internal.Training.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                  {
-                    webBuilder.UseStartup<Startup>();
-                });
+                     webBuilder.UseStartup<Startup>();
+                 });
     }
 }

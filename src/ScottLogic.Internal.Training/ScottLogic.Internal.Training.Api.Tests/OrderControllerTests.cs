@@ -5,10 +5,7 @@ using Moq;
 using Xunit;
 using ScottLogic.Internal.Training.Api.Controllers;
 using System.Security.Claims;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace ScottLogic.Internal.Training.Api.Tests
 {

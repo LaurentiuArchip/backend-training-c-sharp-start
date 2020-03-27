@@ -7,7 +7,6 @@ using ScottLogic.Internal.Training.Matcher;
 using Xunit;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using System.IO;
 
 namespace IntegrationTests
 {
@@ -19,7 +18,7 @@ namespace IntegrationTests
         {
             _factory = factory;
         }
-        
+
         [Theory]
         [InlineData("api/orders")]
         [InlineData("api/trades")]
@@ -56,7 +55,7 @@ namespace IntegrationTests
             var currentTokenJson = JObject.Parse(currentTokenString);
             var tokenKey = "token";
             var currentToken = currentTokenJson.GetValue(tokenKey).ToString();
-            
+
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
 
             var expectedTrades = new List<Trade>();
@@ -142,7 +141,7 @@ namespace IntegrationTests
         {
             // Arrange
 
-                // Set up the Http client and the authorization
+            // Set up the Http client and the authorization
             var client = _factory.CreateClient();
             var requestLogin = new
             {
@@ -160,8 +159,8 @@ namespace IntegrationTests
             var currentToken = currentTokenJson.GetValue(tokenKey).ToString();
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
-            
-                // Post orders
+
+            // Post orders
             var currentOrder1 = new Order(1001, 50, 60, OrderType.Sell, 17);
             var request1 = new
             {
@@ -194,13 +193,13 @@ namespace IntegrationTests
             };
             await client.PostAsync(request4.Url, ContentHelper.GetStringContent(request4.Body));
 
-            var expectedOrders = new List<Order>() {currentOrder1, currentOrder2};
+            var expectedOrders = new List<Order>() { currentOrder1, currentOrder2 };
             var currentTrade = new Trade(currentOrder4.AccountNumber, currentOrder4.Quantity, currentOrder4.Price, currentOrder4.Action);
             var expectedTrade = new List<Trade>() { currentTrade };
 
             // Act
             // Get Existing Orders
-            var responseGetOrders =await client.GetAsync("/api/orders");
+            var responseGetOrders = await client.GetAsync("/api/orders");
             var existingOrdersString = await responseGetOrders.Content.ReadAsStringAsync();
             var existingOrders = JsonConvert.DeserializeObject<IList<Order>>(existingOrdersString);
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Xunit;
 
-
 namespace ScottLogic.Internal.Training.Matcher.Tests
 {
     public class ProcessOrder
@@ -58,7 +57,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentOrder1 = new Order(1001, 45, 55, OrderType.Buy, 14);
             var currentOrder2 = new Order(1002, 45, 55, OrderType.Sell, 15);
             currentMatcher.ExistingOrders.Add(currentOrder1);
-            var oppositeOrders = new List<Order>(){currentOrder1};
+            var oppositeOrders = new List<Order>() { currentOrder1 };
             currentMatcher.SellTrade(currentOrder2, oppositeOrders);
             Assert.Empty(currentMatcher.ExistingOrders);
         }
@@ -74,7 +73,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var oppositeOrders = new List<Order>() { currentOrder1 };
             currentMatcher.SellTrade(currentOrder2, oppositeOrders);
             var currentOrder4 = new Order(1001, 10, 55, OrderType.Buy, 13);
-            
+
             var orders = new List<Order>() { currentOrder4 };
             Assert.Equal(orders, currentMatcher.ExistingOrders);
         }
@@ -170,17 +169,20 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentOrder3 = new Order(1003, 46, 56, OrderType.Sell, 4);
             var currentOrder4 = new Order(1004, 46, 56, OrderType.Sell, 1);
             var currentOrder5 = new Order(1005, 46, 56, OrderType.Buy, 15);
+
             currentMatcher.ExistingOrders.Add(currentOrder1);
             currentMatcher.ExistingOrders.Add(currentOrder2);
             currentMatcher.ExistingOrders.Add(currentOrder3);
             currentMatcher.ExistingOrders.Add(currentOrder4);
+
             var oppositeOrders = new List<Order>() { currentOrder4, currentOrder3, currentOrder1, currentOrder2 };
             currentMatcher.BuyTrade(currentOrder5, oppositeOrders);
+
             var orders = new List<Order>() { currentOrder1, currentOrder2, currentOrder3 };
             Assert.Equal<List<Order>>(orders, currentMatcher.ExistingOrders);
         }
     }
-    
+
     public class ReturnCurrentTrade
     {
         [Fact]
@@ -197,6 +199,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentMatcher = new OrderMatcher();
             currentMatcher.ProcessOrder(currentOrder);
             var currentTrade = currentMatcher.CurrentTrade;
+
             Assert.Null(currentTrade);
         }
 
@@ -207,6 +210,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentMatcher = new OrderMatcher();
             currentMatcher.ProcessOrder(currentOrder);
             var currentTrade = currentMatcher.CurrentTrade;
+
             Assert.Null(currentTrade);
         }
 
@@ -216,10 +220,12 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentMatcher = new OrderMatcher();
             var currentOrder1 = new Order(1001, 45, 55, OrderType.Buy, 14);
             var currentOrder2 = new Order(1002, 45, 55, OrderType.Sell, 15);
+
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
             var currentTrade = new Trade(currentOrder2.AccountNumber, 45, currentOrder2.Price, currentOrder2.Action);
+
             Assert.Equal(currentTrade, returnedTrade);
         }
 
@@ -229,10 +235,12 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentMatcher = new OrderMatcher();
             var currentOrder1 = new Order(1001, 45, 55, OrderType.Sell, 14);
             var currentOrder2 = new Order(1002, 45, 55, OrderType.Buy, 15);
+
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
             var currentTrade = new Trade(currentOrder2.AccountNumber, 45, currentOrder2.Price, currentOrder2.Action);
+
             Assert.Equal(currentTrade, returnedTrade);
         }
 
@@ -242,10 +250,12 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentMatcher = new OrderMatcher();
             var currentOrder1 = new Order(1001, 45, 55, OrderType.Buy, 14);
             var currentOrder2 = new Order(1002, 55, 55, OrderType.Sell, 15);
+
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
             var currentTrade = new Trade(currentOrder2.AccountNumber, 45, currentOrder2.Price, currentOrder2.Action);
+
             Assert.Equal(currentTrade, returnedTrade);
         }
 
@@ -255,10 +265,12 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentMatcher = new OrderMatcher();
             var currentOrder1 = new Order(1001, 45, 55, OrderType.Sell, 14);
             var currentOrder2 = new Order(1002, 55, 55, OrderType.Buy, 15);
+
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
             var currentTrade = new Trade(currentOrder2.AccountNumber, 45, currentOrder2.Price, currentOrder2.Action);
+
             Assert.Equal(currentTrade, returnedTrade);
         }
 
@@ -268,10 +280,12 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentMatcher = new OrderMatcher();
             var currentOrder1 = new Order(1001, 65, 55, OrderType.Buy, 14);
             var currentOrder2 = new Order(1002, 55, 55, OrderType.Sell, 15);
+
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
             var currentTrade = new Trade(currentOrder2.AccountNumber, 55, currentOrder2.Price, currentOrder2.Action);
+
             Assert.Equal(currentTrade, returnedTrade);
         }
 
@@ -281,10 +295,12 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             var currentMatcher = new OrderMatcher();
             var currentOrder1 = new Order(1001, 65, 55, OrderType.Sell, 14);
             var currentOrder2 = new Order(1002, 55, 55, OrderType.Buy, 15);
+
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
             var returnedTrade = currentMatcher.CurrentTrade;
             var currentTrade = new Trade(currentOrder2.AccountNumber, 55, currentOrder2.Price, currentOrder2.Action);
+
             Assert.Equal(currentTrade, returnedTrade);
         }
     }
@@ -295,7 +311,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
         public void NoExistingTrades()
         {
             var currentMatcher = new OrderMatcher();
-            
+
             Assert.Empty(currentMatcher.ExistingTrades);
         }
 
@@ -308,7 +324,7 @@ namespace ScottLogic.Internal.Training.Matcher.Tests
             currentMatcher.ProcessOrder(currentOrder1);
             currentMatcher.ProcessOrder(currentOrder2);
 
-            var trades = new List<Trade>{ currentMatcher.CurrentTrade };
+            var trades = new List<Trade> { currentMatcher.CurrentTrade };
 
             Assert.Equal(trades, currentMatcher.ExistingTrades);
         }

@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -46,7 +45,7 @@ namespace ScottLogic.Internal.Training.Api
                     .RequireAuthenticatedUser()
                     .Build());
             });
-            
+
             services.AddDbContext<ApiContext>(options => options.UseInMemoryDatabase("UsersDb"));
 
             services.AddScoped<ApiContext>();
@@ -54,7 +53,7 @@ namespace ScottLogic.Internal.Training.Api
             services.AddSingleton<IOrderMatcher, OrderMatcher>();
 
             services.AddControllers();
-          
+
             services.AddSwaggerDocument();
         }
 
@@ -65,7 +64,7 @@ namespace ScottLogic.Internal.Training.Api
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetService<ApiContext>();
-               AddTestData(context);
+                AddTestData(context);
             }
 
             // Other configurations

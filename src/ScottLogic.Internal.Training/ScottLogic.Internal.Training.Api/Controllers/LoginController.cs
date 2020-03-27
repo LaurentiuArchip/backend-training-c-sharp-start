@@ -54,7 +54,6 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 var tokenString = GenerateJsonWebToken(user);
                 response = Ok(new { token = tokenString });
             }
-
             return response;
         }
 
@@ -81,17 +80,19 @@ namespace ScottLogic.Internal.Training.Api.Controllers
         private User AuthenticateUser(User login)
         {
             User user = null;
-            
+
             //Validate the User Credentials  
-                // Get the existing users from the database
-            var existingUser = _context.Users.Where(u=> u.Username == login.Username).ToArray();
-                // Check the password
+            // Get the existing users from the database
+            var existingUser = _context.Users.Where(u => u.Username == login.Username).ToArray();
+            // Check the password
             if (existingUser.Count() == 1 && CheckEncryptedPassword(existingUser[0], login.Password))
             {
-                user = new User { Username = existingUser[0].Username,
-                                Password = existingUser[0].Password,
-                                AccountNumber = existingUser[0].AccountNumber,
-                                Role = existingUser[0].Role
+                user = new User
+                {
+                    Username = existingUser[0].Username,
+                    Password = existingUser[0].Password,
+                    AccountNumber = existingUser[0].AccountNumber,
+                    Role = existingUser[0].Role
                 };
             }
             return user;
@@ -104,8 +105,8 @@ namespace ScottLogic.Internal.Training.Api.Controllers
             Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt);
             var hashValue = pbkdf2.GetBytes(HASH_SIZE);
             var hashValueString = Convert.ToBase64String(hashValue);
-            
-            return (hashValueString == user.Password);
+
+            return hashValueString == user.Password;
         }
     }
 }

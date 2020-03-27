@@ -121,6 +121,7 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 userAccount = Int32.Parse(userIdentity.Claims
                     .FirstOrDefault(c => c.Type == "AccountNumber").Value);
             }
+
             // Check if the order is valid
             if (userAccount != null && userAccount == currentOrder.AccountNumber && currentOrder.Action == OrderType.Sell)
             {

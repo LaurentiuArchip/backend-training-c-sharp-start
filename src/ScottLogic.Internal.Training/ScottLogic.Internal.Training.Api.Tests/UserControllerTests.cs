@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ScottLogic.Internal.Training.Api.Controllers;
-using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -14,7 +12,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
     public class UserControllerTests
     {
         [Fact]
-        public  void GetUsers_FromEmptyDb_ReturnsOk()
+        public void GetUsers_FromEmptyDb_ReturnsOk()
         {
             var options = new DbContextOptionsBuilder<ApiContext>()
                 .UseInMemoryDatabase("usersDb").Options;
@@ -60,7 +58,7 @@ namespace ScottLogic.Internal.Training.Api.Tests
                .UseInMemoryDatabase("usersDb").Options;
             var apiContext = new ApiContext(options);
 
-            var claims = new []
+            var claims = new[]
             {
                 new Claim(ClaimTypes.Role, UserRole.Admin.ToString()),
                 new Claim("Username", "Luke")
@@ -206,7 +204,5 @@ namespace ScottLogic.Internal.Training.Api.Tests
             Assert.Equal(401, result.StatusCode);
             apiContext.Dispose();
         }
-
-
     }
 }

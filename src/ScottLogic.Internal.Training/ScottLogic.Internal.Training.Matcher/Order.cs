@@ -22,7 +22,7 @@ namespace ScottLogic.Internal.Training.Matcher
         public int Price { get; set; }
         [Required]
         public OrderType Action { get; set; }
-        public int TimeRank {get; set; }
+        public int TimeRank { get; set; }
 
         public Order() { }
         public Order(int accountNumber, int quantity, int price, OrderType action, int timeRank)
@@ -36,7 +36,7 @@ namespace ScottLogic.Internal.Training.Matcher
 
         public bool Equals(Order other)
         {
-            return other != null && 
+            return other != null &&
                 AccountNumber == other.AccountNumber &&
                 Quantity == other.Quantity &&
                 Price == other.Price &&

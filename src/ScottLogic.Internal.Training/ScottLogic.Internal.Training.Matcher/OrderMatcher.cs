@@ -12,6 +12,7 @@ namespace ScottLogic.Internal.Training.Matcher
         public bool ProcessOrder(Order currentOrder)
         {
             var orderProcessed = false;
+            
             // No existing order to match against
             if (!ExistingOrders.Any())
             {
@@ -44,6 +45,7 @@ namespace ScottLogic.Internal.Training.Matcher
         private bool TradeOrder(Order currentOrder, List<Order> oppositeOrders)
         {
             var orderProcessed = false;
+            
             // Existing orders with opposite action, try a trade
             if (currentOrder.Action == OrderType.Sell)
             {
@@ -142,7 +144,7 @@ namespace ScottLogic.Internal.Training.Matcher
 
             // Create a Trade
             CurrentTrade = new Trade(currentOrder.AccountNumber, 0, currentOrder.Price, currentOrder.Action);
-            
+
             for (var i = 0; i < oppositeOrders.Count && currentOrder.Quantity > 0; i++)
             {
                 orderProcessed = true;
@@ -153,7 +155,6 @@ namespace ScottLogic.Internal.Training.Matcher
                     ExistingOrders = ExistingOrders.Where(order => order.TimeRank != oppositeOrders[i].TimeRank).ToList();
                     currentOrder.Quantity -= oppositeOrders[i].Quantity;
                     CurrentTrade.Quantity += oppositeOrders[i].Quantity;
-
                 }
                 else
                 {

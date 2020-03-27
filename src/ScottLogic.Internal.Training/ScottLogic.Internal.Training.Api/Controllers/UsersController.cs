@@ -112,14 +112,14 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 {
                     var userRolesString = userIdentity.Claims
                         .FirstOrDefault(claim => claim.Type == ClaimTypes.Role).Value;
-                    if(userRolesString == "Admin")
+                    if (userRolesString == "Admin")
                     {
                         userRole = UserRole.Admin;
                     }
                 }
 
                 // Get the user userName from the access token
-                #nullable enable
+#nullable enable
                 string? loggedInUsername = null;
                 if (userIdentity != null && userIdentity.HasClaim(claim => claim.Type == "Username"))
                 {
@@ -127,16 +127,16 @@ namespace ScottLogic.Internal.Training.Api.Controllers
                 }
 
                 // Username to delete
-                    // Admin can delete any user or The user can delete only their own data
-                string? userNameToDelete = userRole == UserRole.Admin ? userToDelete : 
+                // Admin can delete any user or The user can delete only their own data
+                string? userNameToDelete = userRole == UserRole.Admin ? userToDelete :
                     (loggedInUsername == userToDelete ? loggedInUsername : null);
 
-                if(userNameToDelete != null)
+                if (userNameToDelete != null)
                 {
                     // Get the existing users from the database
                     var users = await _context.Users.ToArrayAsync();
 
-                    if (users.Any(user => user.Username == userNameToDelete)) 
+                    if (users.Any(user => user.Username == userNameToDelete))
                     {
                         // Delete user
                         _context.Users.Remove(_context.Users.FirstOrDefault(user => user.Username == userNameToDelete));
